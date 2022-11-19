@@ -4,8 +4,13 @@
  */
 package cu.edu.cujae.ed.snetwork.test;
 
+import cu.edu.cujae.ceis.tree.general.GeneralTree;
+import cu.edu.cujae.ceis.tree.iterators.general.InBreadthIterator;
+import cu.edu.cujae.ceis.tree.iterators.general.InBreadthIteratorWithLevels;
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.utils.Friendship;
+import cu.edu.cujae.graphy.core.trees.DefaultGeneralTree;
 import cu.edu.cujae.graphy.core.utility.Weights;
 import java.util.LinkedList;
 
@@ -49,9 +54,30 @@ public class NetWorkTest
         for(Person p : aux){
             System.out.println(p.getName());
         }
+        snet.modifyAmountOfWork(new Friendship(brian, 6), jose);
+        System.out.println(brian.getName());
+        snet.friendRequest(new Friendship(brian, 6), amaya);
+        LinkedList<Person> aux2 = snet.isolatedPersons();
+        for(Person p : aux2){
+            System.out.println(p.getName());
+        }
+        snet.getsocialNetWork().connect(1, 6, Weights.makeWeight(9));
         
+     /*   System.out.println(snet.getLabelofPerson(dory));
+
         
+        snet.deletePerson(jose);
         
+        System.out.println(snet.getLabelofPerson(dory));
+*/
+       DefaultGeneralTree <Person> tree = snet.getConexionOfAPerson(brian);
+       System.out.println(tree.toString());
+     
+       LinkedList<Person> aux3 = snet.isolatedPersons();
+        for(Person p : aux3){
+            System.out.println(p.getName());
+        }
+       
     }
     
 }

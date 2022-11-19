@@ -5,6 +5,9 @@
 package cu.edu.cujae.ed.snetwork.logic;
 
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
+import cu.edu.cujae.ed.snetwork.utils.Notification;
+import cu.edu.cujae.ed.snetwork.utils.NotificationType;
+import cu.edu.cujae.graphy.utils.Pair;
 
 /**
  *
@@ -127,8 +130,12 @@ public final class Person
          return p.getCountry().equalsIgnoreCase(country)? p.getID().equals(ID) : false;
     }
     
-    public Friendship sendFriendRequest (int amountOfWork){
-        return new Friendship (this,amountOfWork);
+    public Pair<Notification<Friendship>,Person> sendFriendRequest (int amountOfWork, Person p){
+        return new Pair <> ( new Notification<> (NotificationType.FRINDSHIP_REQUEST,"Desearía trabajar con usted",new Friendship (this,amountOfWork)),p) ;
+    }
+    
+    public Pair<Notification<Friendship>,Person> sendWorkLoadModification (int amountOfWork, Person p){
+        return new Pair <>(new Notification<> (NotificationType.WORKLOAD_MODIFICATION,"Desearia modificar la cantidad de trabajo que compartimos", new Friendship (this,amountOfWork)),p);
     }
     
 }

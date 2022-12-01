@@ -21,6 +21,7 @@ import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import java.util.LinkedList;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.view.View;
@@ -156,9 +157,13 @@ public class MainWindow extends javax.swing.JFrame
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem3ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem3ActionPerformed
+        try {
         LinkedList<Person> list = ApplicationController.getInstance().getResearchLeaders();
         LideresInvestigacion li = new LideresInvestigacion(this, false, list);
         li.setVisible(true);
+        } catch (IllegalStateException ex) {
+            JOptionPane.showMessageDialog(null, "No existen personas en la red social", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenu1ActionPerformed
@@ -168,9 +173,13 @@ public class MainWindow extends javax.swing.JFrame
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem5ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
+        try {
         LinkedList<Person> p = ApplicationController.getInstance().isolatedPersons();
         IsolatedVertices iv = new IsolatedVertices(this, false, p);
         iv.setVisible(true);
+        } catch (IllegalStateException ex) {
+            JOptionPane.showMessageDialog(null, "No existen personas en la red social", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
         
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 

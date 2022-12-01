@@ -16,6 +16,7 @@
  */
 package cu.edu.cujae.ed.snetwork.ui;
 
+import cu.edu.cujae.ed.snetwork.logic.Person;
 import javax.swing.JPanel;
 
 /**
@@ -27,10 +28,15 @@ public class SideBarButton extends JPanel
 
     /**
      * Creates new form SideBarButton
+     * @param person
      */
-    public SideBarButton()
+    public SideBarButton(Person person)
     {
         initComponents();
+        
+        nameLabel.setText(person.getName() + " " + person.getLastName());
+        infoLabel.setText(person.getProfession() + " - " + person.getCountry());
+        
     }
 
     /**
@@ -44,26 +50,29 @@ public class SideBarButton extends JPanel
     {
 
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
-        jLabel1 = new javax.swing.JLabel();
+        photoLabel = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
+        infoLabel = new javax.swing.JLabel();
 
+        setMaximumSize(new java.awt.Dimension(200, 32));
+        setMinimumSize(new java.awt.Dimension(200, 32));
+        setPreferredSize(new java.awt.Dimension(200, 32));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
         add(filler2);
 
-        jLabel1.setText("Foto");
-        add(jLabel1);
+        photoLabel.setText("Foto");
+        add(photoLabel);
         add(filler1);
 
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.PAGE_AXIS));
 
-        jLabel2.setText("Nombre y apellidos");
-        jPanel2.add(jLabel2);
+        nameLabel.setText("Nombre y apellidos");
+        jPanel2.add(nameLabel);
 
-        jLabel3.setText("Info");
-        jPanel2.add(jLabel3);
+        infoLabel.setText("Info");
+        jPanel2.add(infoLabel);
 
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
@@ -72,9 +81,9 @@ public class SideBarButton extends JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel infoLabel;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel photoLabel;
     // End of variables declaration//GEN-END:variables
 }

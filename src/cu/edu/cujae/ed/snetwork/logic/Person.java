@@ -8,6 +8,7 @@ import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
+import java.awt.Image;
 
 /**
  *
@@ -20,16 +21,24 @@ public final class Person
     private String ID;
     private String country;
     private String profession;
+    private String pasword;
+    private Image photo;
     
-    public Person (String name, String lastName, String ID, String country, String profession){
+    public Person (String name, String lastName, String ID, String country, String profession, String pasword, Image photo){
         setName(name);
         setLastName(lastName);
         setID(ID);
         setCountry(country);
         setProfession(profession);
+        this.photo = photo;
         
     }
-    
+
+    public Person(String name, String lastName, String ID, String country, String profession, String pasword)
+    {
+        this(name, lastName, ID, country, profession, pasword, null);
+    }
+        
     //Getters
     public String getName(){ return this.name;}
     public String getLastName(){return this.lastName;}
@@ -129,11 +138,22 @@ public final class Person
     public boolean equals (Person p){
          return p.getCountry().equalsIgnoreCase(country)? p.getID().equals(ID) : false;
     }
-    
+    /**
+     * 
+     * @param amountOfWork cantidad de trabajo a compartir
+     * @param p persona a la que se le envia la solicitud de amistad
+     * @return Pair<Notification<Friendship>,Person> donde la notificacion contiene la persona solicitante y la cantidad de trabajo y Person es la solicitada
+     */
     public Pair<Notification<Friendship>,Person> sendFriendRequest (int amountOfWork, Person p){
         return new Pair <> ( new Notification<> (NotificationType.FRINDSHIP_REQUEST,"Desearía trabajar con usted",new Friendship (this,amountOfWork)),p) ;
     }
     
+     /**
+     * 
+     * @param amountOfWork nueva cantidad de trabajo a compartir
+     * @param p persona a la que se le envia la solicitud
+     * @return Pair<Notification<Friendship>,Person> donde la notificacion contiene la persona solicitante y la cantidad de trabajo y Person es la solicitada
+     */
     public Pair<Notification<Friendship>,Person> sendWorkLoadModification (int amountOfWork, Person p){
         return new Pair <>(new Notification<> (NotificationType.WORKLOAD_MODIFICATION,"Desearia modificar la cantidad de trabajo que compartimos", new Friendship (this,amountOfWork)),p);
     }

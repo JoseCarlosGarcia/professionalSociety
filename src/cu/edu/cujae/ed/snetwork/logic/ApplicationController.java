@@ -6,7 +6,10 @@ package cu.edu.cujae.ed.snetwork.logic;
 
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
+import cu.edu.cujae.graphy.algorithms.FirstLevelCommunities;
 import cu.edu.cujae.graphy.algorithms.IsolatedVertices;
+import cu.edu.cujae.graphy.core.Edge;
+import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.TreeNode;
 import cu.edu.cujae.graphy.core.WeightedGraph;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
@@ -15,12 +18,16 @@ import cu.edu.cujae.graphy.core.trees.DefaultGeneralTreeNode;
 import cu.edu.cujae.graphy.core.utility.GraphBuilders;
 import cu.edu.cujae.graphy.core.utility.Weights;
 import cu.edu.cujae.graphy.utils.Pair;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -34,14 +41,20 @@ public class ApplicationController
     private final WeightedGraph<Person> socialNetWork;
     private int labelCounter;
     private final Map<Person, List<Notification<?>>> pendantNotifications;
-    private Set<Integer> visited;
+    //private Set<Integer> visited;
 
     private ApplicationController()
     {
         this.pendantNotifications = new HashMap<>();
         this.socialNetWork = GraphBuilders.makeSimpleWeightedGraph(false);
         this.labelCounter = 0;
-        this.visited = new TreeSet<>();
+        //this.visited = new TreeSet<>();
+    }
+
+
+    public Map<Person, List<Notification<?>>> getPendantNotifications()
+    {
+        return pendantNotifications;
     }
 
     public static ApplicationController getInstance()
@@ -101,7 +114,7 @@ public class ApplicationController
     }
 
     //Conectar 2 personas y asignar la cantidad de trabajo que comparten
-    public boolean friendRequest(Friendship friendship, Person person2)
+    public boolean friendRequest (Friendship friendship, Person person2) throws IllegalArgumentException
     {
         Person person1 = friendship.getPerson();
         int amountOfWork = friendship.getAmountOfWork();
@@ -152,7 +165,7 @@ public class ApplicationController
     }
 
     //Modificar cantidad de trabajo entre dos personas
-    public boolean modifyAmountOfWork(Friendship friendship, Person person2)
+    public boolean modifyAmountOfWork(Friendship friendship, Person person2) throws IllegalArgumentException
     {
         Person person1 = friendship.getPerson();
         int amountOfWork = friendship.getAmountOfWork();
@@ -193,6 +206,52 @@ public class ApplicationController
                     {
                         throw new IllegalArgumentException("El peso debe ser positivo");
                     }
+                }
+            }
+            else
+            {
+                throw new IllegalArgumentException("Inserte correctamente la persona");
+            }
+        }
+        else
+        {
+            throw new IllegalArgumentException("Inserte correctamente la persona");
+        }
+        return result;
+    }
+    
+    //Obtener la cantidad de trabajos que comparten dos personas
+    public int getAmountOfWork (Person person1, Person person2){
+        int result = -1;
+        if (person1 != null)
+        {
+            if (person2 != null)
+            {
+                if (!person1.equals(person2))
+                {
+                        int label1 = getLabelofPerson(person1);
+                        if (label1 >= 0)
+                        {
+                            int label2 = getLabelofPerson(person2);
+                            if (label2 >= 0)
+                            {
+                                GraphIterator<Person> iter = (GraphIterator<Person>) socialNetWork.iterator(label1);
+                                GraphIterator<Person> iter2 = (GraphIterator<Person>) socialNetWork.iterator(label2);
+                                if (iter.isAdjacent(iter2))
+                                {
+                                    result = (Integer) iter.getAdjacentEdge(label2).getWeight().getValue();
+                                    
+                                }
+                            }
+                            else
+                            {
+                                throw new IllegalArgumentException("No existe " + person2.getName() + " " + person2.getLastName() + " en la red social");
+                            }
+                        }
+                        else
+                        {
+                            throw new IllegalArgumentException("No existe " + person1.getName() + " " + person1.getLastName() + " en la red social");
+                        }
                 }
             }
             else
@@ -262,7 +321,7 @@ public class ApplicationController
     }
     
     //Eliminar amistad
-    public boolean deleteFriendship(Person person1, Person person2)
+    public boolean deleteFriendship(Person person1, Person person2) throws IllegalArgumentException
     {
         boolean result = false;
         if (person1 != null)
@@ -307,11 +366,10 @@ public class ApplicationController
 
     }
     
-    //Método para obtener conexiones entre las personas
-    /*
-    *Este método permite obtener una representación de las conexiones de las personas
-    donde la persona en cuestión es la raiz y en el primer nivel están las personas con las que se tiene conexión directa,
-    en el siguiente nivel, están las personas con las que se tiene conexión a través de la persona del nivel anterior  asi sucesivamente
+    /**Este método permite obtener una representación de las conexiones de las personas
+    *donde la persona en cuestión es la raiz y en el primer nivel están las personas con las que se tiene conexión directa,
+    *en el siguiente nivel, están las personas con las que se tiene conexión a través de la persona del nivel anterior  asi sucesivamente
+    * @param p 
     */
     public DefaultGeneralTree<Person> getConexionOfAPerson(Person p){
         DefaultGeneralTree<Person> tree = new DefaultGeneralTree<>();
@@ -345,6 +403,13 @@ public class ApplicationController
         return tree;
     }
     
+    /**
+     * 
+     * @param tree
+     * @param visited
+     * @param conectarP
+     * @param padre 
+     */
     public void conect(DefaultGeneralTree<Person> tree, Set<Integer> visited, LinkedList<Integer> conectarP, TreeNode<Person> padre)
     {
         if(!conectarP.isEmpty()){
@@ -367,9 +432,85 @@ public class ApplicationController
         }
         }
     }
+    
+    /**Método para obtener relación jerárquica de los amigos 
+     * 
+     * @param ite GraphIterator<Person> en la posicion de la persona
+     * @return 
+     */
+    public Tree<Person> getCollaborationExpansionTree (GraphIterator<Person> ite)
+    {
+        int work = Integer.MAX_VALUE;
+        Person root = ite.next(ite.getLabel());
+        Tree<Person> tree = new DefaultGeneralTree<>();
+        TreeNode<Person> temporalNode = tree.add(null, root);
+        TreeNode<Person> parent = temporalNode;
+        LinkedList<Pair<Person,Integer>> list = new LinkedList<>();
+        for (Edge e : ite.getAllAdjacentEdges()){
+            Pair<Person,Integer> pair = new Pair (e.getFinalNode().get(),e.getWeight().getValue());
+            list.add(pair);
+        }
         
+        Collections.sort(list, (Pair<Person, Integer> o1, Pair<Person, Integer> o2) -> o2.getLast().compareTo(o1.getLast()));
+        
+        while (!list.isEmpty()){
+            Pair<Person,Integer> p = list.poll();
+            if(p.getLast() == work){
+                temporalNode = tree.add(parent, p.getFirst());
+            } else if (p.getLast() < work) {
+                parent = temporalNode;
+                temporalNode = tree.add(parent, p.getFirst());
+            }
+            work = p.getLast();
+        }
+        
+        return tree;
+    }
+    
+    /**Método para obtener líderes de investigación 
+     * 
+     * @return 
+     */
+    public LinkedList<Person> getResearchLeaders (){
+        LinkedList<Person> researchLeaders = new LinkedList<>();
+        int depthMax = 0;
+        
+        GraphIterator <Person> it = (GraphIterator <Person>) socialNetWork.breadthFirstSearchIterator(true);
+        while (it.hasNext()){
+            Person p = it.next();
+            if (!it.getAllAdjacentEdges().isEmpty()){
+            Tree<Person> tree = getCollaborationExpansionTree(socialNetWork.iterator(it.getLabel()));
+            int depthTree = tree.countLevels();
+            
+            if (depthTree > depthMax) {
+                researchLeaders.clear();
+                researchLeaders.add(p);
+                depthMax = depthTree;
+            } else if (depthTree == depthMax){
+                researchLeaders.add(p);
+            }
+            }
+        }
+        
+        return researchLeaders;
+    }
+    
+    /**Método para obtener comunidades
+     * 
+     * @return 
+     */
+    public ArrayList<ArrayList<Person>> getCommunities (){
+        ArrayList<ArrayList<Person>> comunitiesPerson = new ArrayList<>();
+        ArrayList<Collection<Integer>> comunitiesInt = (ArrayList<Collection<Integer>>) new FirstLevelCommunities(socialNetWork).apply().get();
+        for (Collection<Integer> c : comunitiesInt){
+            ArrayList<Person> a = new ArrayList<>();
+            for (Integer i : c){
+                a.add(getPerson(i));
+            }
+            comunitiesPerson.add(a);
+        }
+        return comunitiesPerson;
+    }
+    
 //Listado
-//Método para obtener comunidades NANDA
-//Método para obtener relación jerárquica de los amigos AMANDA
-//Método para obtener líderes de investigación AMANDA
 }

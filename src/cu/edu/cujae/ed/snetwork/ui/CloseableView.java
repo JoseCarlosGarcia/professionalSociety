@@ -14,16 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cu.edu.cujae.ed.snetwork.utils;
+package cu.edu.cujae.ed.snetwork.ui;
+
+import java.util.UUID;
+import org.flexdock.view.View;
 
 /**
  *
  * @author Jose
  */
-public enum NotificationType
+public class CloseableView extends View
 {
-    FRINDSHIP_REQUEST,
-    WORKLOAD_MODIFICATION,
-    CONFIRMATION,
-    NEGATION
+    public CloseableView (String title ){
+        super (title + UUID.randomUUID(), title, title);
+        
+    }
 }

@@ -21,7 +21,7 @@ public final class Person
     private String ID;
     private String country;
     private String profession;
-    private String pasword;
+    private String password;
     private Image photo;
     
     public Person (String name, String lastName, String ID, String country, String profession, String pasword, Image photo){
@@ -45,8 +45,19 @@ public final class Person
     public String getID(){ return this.ID;}
     public String getCountry(){ return this.country;}
     public String getProfession(){ return this.profession;}
+    public String getPassword(){return this.password;}
+    
+    
     
     //Setters
+    
+    public void setPassword (String password){
+        if(password !=null){
+        this.password = password;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
     public void setName(String name) throws IllegalArgumentException{
         if(name!=null){
             this.name = name;

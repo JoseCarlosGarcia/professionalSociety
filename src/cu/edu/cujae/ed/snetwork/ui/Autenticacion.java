@@ -32,7 +32,7 @@ public class Autenticacion extends javax.swing.JDialog
     {
         super(parent, modal);
         initComponents();
-        this.pasword = p.getPasword();
+        this.pasword = p.getPassword();
         jLabelUsuario.setText(p.getName() + " " + p.getLastName());
         jLabelCI.setVisible(false);
         

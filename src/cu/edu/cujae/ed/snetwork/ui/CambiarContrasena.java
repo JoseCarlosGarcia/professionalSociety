@@ -36,7 +36,7 @@ public class CambiarContrasena extends javax.swing.JDialog
         super(parent, modal);
         initComponents();
         this.person = person;
-        this.pasword = person.getPasword();
+        this.pasword = person.getPassword();
         jLabelUsuario.setText(person.getName() + " " + person.getLastName());
         jLabelCI.setVisible(false);
         
@@ -194,7 +194,7 @@ public class CambiarContrasena extends javax.swing.JDialog
         String p =  String.valueOf(jPassword.getPassword());
         if (p.equals(pasword) ){
             if (!p.equals(newPasword)){
-                person.setPasword(newPasword);
+                person.setPassword(newPasword);
             } else {
                 jLabelCI.setText("La contraseña nueva no puede ser igual a la anterior");
                 jLabelCI.setVisible(true);

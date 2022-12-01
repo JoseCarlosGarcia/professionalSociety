@@ -22,6 +22,7 @@ import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
+import java.util.UUID;
 import javax.swing.JOptionPane;
 
 /**
@@ -237,7 +238,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
             {
                 ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
                 JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().getLastName() + " y usted ahora comparten " + friendship.getAmountOfWork() + " de trabajo" , "Nueva cantidad de trabajos", JOptionPane.INFORMATION_MESSAGE);
-                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.CONFIRMATION,null, solicitada.getName() + " " + solicitada.getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten"));
+                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.CONFIRMATION,null, solicitada.getName() + " " + solicitada.getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten",UUID.randomUUID()));
             }
         } catch(IllegalArgumentException e)
         {
@@ -249,7 +250,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
-        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.NEGATION,null, solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten"));
+        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.NEGATION,null, solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten",UUID.randomUUID()));
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

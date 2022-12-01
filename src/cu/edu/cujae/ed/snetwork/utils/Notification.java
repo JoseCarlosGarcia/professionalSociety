@@ -16,6 +16,8 @@
  */
 package cu.edu.cujae.ed.snetwork.utils;
 
+import java.util.UUID;
+
 /**
  *
  * @author Jose
@@ -23,14 +25,16 @@ package cu.edu.cujae.ed.snetwork.utils;
 public final class Notification<T>
 {
     private NotificationType type;
+    private UUID uuid;
     private String message;
     private T data;
 
-    public Notification(NotificationType type, String message, T data)
+    public Notification(NotificationType type, String message, T data, UUID uuid)
     {
         this.type = type;
         this.message = message;
         this.data = data;
+        this.uuid = uuid;
     }
 
     /**

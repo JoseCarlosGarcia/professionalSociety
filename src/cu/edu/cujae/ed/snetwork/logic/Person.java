@@ -9,6 +9,7 @@ import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
 import java.awt.Image;
+import java.util.UUID;
 
 /**
  *
@@ -16,6 +17,7 @@ import java.awt.Image;
  */
 public final class Person
 {
+
     private String name;
     private String lastName;
     private String ID;
@@ -23,150 +25,218 @@ public final class Person
     private String profession;
     private String password;
     private Image photo;
-    
-    public Person (String name, String lastName, String ID, String country, String profession, String pasword, Image photo){
+
+    public Person(String name, String lastName, String ID, String country, String profession, String pasword, Image photo)
+    {
         setName(name);
         setLastName(lastName);
         setID(ID);
         setCountry(country);
         setProfession(profession);
         this.photo = photo;
-        
+
     }
 
     public Person(String name, String lastName, String ID, String country, String profession, String pasword)
     {
         this(name, lastName, ID, country, profession, pasword, null);
     }
-        
+
     //Getters
-    public String getName(){ return this.name;}
-    public String getLastName(){return this.lastName;}
-    public String getID(){ return this.ID;}
-    public String getCountry(){ return this.country;}
-    public String getProfession(){ return this.profession;}
-    public String getPassword(){return this.password;}
-    
-    
-    
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public String getLastName()
+    {
+        return this.lastName;
+    }
+
+    public String getID()
+    {
+        return this.ID;
+    }
+
+    public String getCountry()
+    {
+        return this.country;
+    }
+
+    public String getProfession()
+    {
+        return this.profession;
+    }
+
+    public String getPassword()
+    {
+        return this.password;
+    }
+
     //Setters
-    
-    public void setPassword (String password){
-        if(password !=null){
-        this.password = password;
-        } else {
+    public void setPassword(String password)
+    {
+        if (password != null)
+        {
+            this.password = password;
+        }
+        else
+        {
             throw new IllegalArgumentException();
         }
     }
-    public void setName(String name) throws IllegalArgumentException{
-        if(name!=null){
+
+    public void setName(String name) throws IllegalArgumentException
+    {
+        if (name != null)
+        {
             this.name = name;
-        } else{
+        }
+        else
+        {
             throw new IllegalArgumentException();
         }
     }
-    
-    public void setLastName(String lastName) throws IllegalArgumentException{
-        if(lastName != null){
+
+    public void setLastName(String lastName) throws IllegalArgumentException
+    {
+        if (lastName != null)
+        {
             this.lastName = lastName;
-        }else {
+        }
+        else
+        {
             throw new IllegalArgumentException();
         }
     }
-        public void setCountry( String country) throws IllegalArgumentException{
-        if(country != null){
+
+    public void setCountry(String country) throws IllegalArgumentException
+    {
+        if (country != null)
+        {
             this.country = country;
-        } else{
+        }
+        else
+        {
             throw new IllegalArgumentException();
         }
     }
-    
-    public void setProfession (String profession) throws IllegalArgumentException{
-        if(profession!= null){
+
+    public void setProfession(String profession) throws IllegalArgumentException
+    {
+        if (profession != null)
+        {
             this.profession = profession;
-        } else{
+        }
+        else
+        {
             throw new IllegalArgumentException();
         }
     }
-    
-    public void setID (String ID){
-        		boolean flag = true;
-		String dayA, monthA, yearA;
-		int dayB, monthB, yearB;
-		if(ID.length() == 11){
-			for(int i =0; i<ID.length(); i++) {
-				flag = Character.isDigit(ID.charAt(i));
-			}
-			if(flag) {
-				dayA = ID.substring(4, 6);
-				monthA = ID.substring(2, 4);
-				yearA = ID.substring(0, 2);
-				dayB = Integer.parseInt(dayA);
-				monthB = Integer.parseInt(monthA);
-				yearB = Integer.parseInt(yearA);
 
-				if((yearB>50 && yearB<100) || (yearB>=0 && yearB<5)){
-					if(monthB>0 && monthB<=12) {
-						if(monthB==1 || monthB==3 || monthB==5 || monthB==7 || monthB==8 || monthB==10 || monthB==12) {
-							if(dayB>31) {
-								throw new IllegalArgumentException ("Fecha no valida");
-							}
-						}
-						else if (monthB==4 || monthB==6 || monthB==9 || monthB==11) {
-							if(dayB>30) {
-								throw new IllegalArgumentException("Fecha no valida");
-							}
-						}
-						else if(monthB == 2) {
-							if(yearB%4!=0 && dayB>28 ) {
-								throw new IllegalArgumentException("Fecha no valida");
-							}
-							else if(yearB%4==0 && dayB>29) {
-								throw new IllegalArgumentException("Fecha no valida");
-							}
-						}
-					}
-					else {
-						throw new IllegalArgumentException("Mes no valido");
-					}
-				}
-				else {
-					throw new IllegalArgumentException("Ano no valido");
-				}
-			}
+    public void setID(String ID)
+    {
+        boolean flag = true;
+        String dayA, monthA, yearA;
+        int dayB, monthB, yearB;
+        if (ID.length() == 11)
+        {
+            for (int i = 0; i < ID.length(); i++)
+            {
+                flag = Character.isDigit(ID.charAt(i));
+            }
+            if (flag)
+            {
+                dayA = ID.substring(4, 6);
+                monthA = ID.substring(2, 4);
+                yearA = ID.substring(0, 2);
+                dayB = Integer.parseInt(dayA);
+                monthB = Integer.parseInt(monthA);
+                yearB = Integer.parseInt(yearA);
 
-			else {
-				throw new IllegalArgumentException("El CI solo puede contener digitos");
-			}
-			
-			this.ID = ID;
-		}
-		else {
-			throw new IllegalArgumentException ("El CI debe tener 11 digitos"+ ID);
-		}
+                if ((yearB > 50 && yearB < 100) || (yearB >= 0 && yearB < 5))
+                {
+                    if (monthB > 0 && monthB <= 12)
+                    {
+                        if (monthB == 1 || monthB == 3 || monthB == 5 || monthB == 7 || monthB == 8 || monthB == 10 || monthB == 12)
+                        {
+                            if (dayB > 31)
+                            {
+                                throw new IllegalArgumentException("Fecha no valida");
+                            }
+                        }
+                        else if (monthB == 4 || monthB == 6 || monthB == 9 || monthB == 11)
+                        {
+                            if (dayB > 30)
+                            {
+                                throw new IllegalArgumentException("Fecha no valida");
+                            }
+                        }
+                        else if (monthB == 2)
+                        {
+                            if (yearB % 4 != 0 && dayB > 28)
+                            {
+                                throw new IllegalArgumentException("Fecha no valida");
+                            }
+                            else if (yearB % 4 == 0 && dayB > 29)
+                            {
+                                throw new IllegalArgumentException("Fecha no valida");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new IllegalArgumentException("Mes no valido");
+                    }
+                }
+                else
+                {
+                    throw new IllegalArgumentException("Ano no valido");
+                }
+            }
+
+            else
+            {
+                throw new IllegalArgumentException("El CI solo puede contener digitos");
+            }
+
+            this.ID = ID;
+        }
+        else
+        {
+            throw new IllegalArgumentException("El CI debe tener 11 digitos" + ID);
+        }
     }
-    
-    public boolean equals (Person p){
-         return p.getCountry().equalsIgnoreCase(country)? p.getID().equals(ID) : false;
+
+    public boolean equals(Person p)
+    {
+        return p.getCountry().equalsIgnoreCase(country) ? p.getID().equals(ID) : false;
     }
+
     /**
-     * 
+     *
      * @param amountOfWork cantidad de trabajo a compartir
      * @param p persona a la que se le envia la solicitud de amistad
-     * @return Pair<Notification<Friendship>,Person> donde la notificacion contiene la persona solicitante y la cantidad de trabajo y Person es la solicitada
+     * @return Pair<Notification<Friendship>,Person> donde la notificacion
+     * contiene la persona solicitante y la cantidad de trabajo y Person es la
+     * solicitada
      */
-    public Pair<Notification<Friendship>,Person> sendFriendRequest (int amountOfWork, Person p){
-        return new Pair <> ( new Notification<> (NotificationType.FRINDSHIP_REQUEST,"Desearía trabajar con usted",new Friendship (this,amountOfWork)),p) ;
+    public Pair<Notification<Friendship>, Person> sendFriendRequest(int amountOfWork, Person p)
+    {
+        return new Pair<>(new Notification<>(NotificationType.FRINDSHIP_REQUEST, "Desearía trabajar con usted", new Friendship(this, amountOfWork), UUID.randomUUID()), p);
     }
-    
-     /**
-     * 
+
+    /**
+     *
      * @param amountOfWork nueva cantidad de trabajo a compartir
      * @param p persona a la que se le envia la solicitud
-     * @return Pair<Notification<Friendship>,Person> donde la notificacion contiene la persona solicitante y la cantidad de trabajo y Person es la solicitada
+     * @return Pair<Notification<Friendship>,Person> donde la notificacion
+     * contiene la persona solicitante y la cantidad de trabajo y Person es la
+     * solicitada
      */
-    public Pair<Notification<Friendship>,Person> sendWorkLoadModification (int amountOfWork, Person p){
-        return new Pair <>(new Notification<> (NotificationType.WORKLOAD_MODIFICATION,"Desearia modificar la cantidad de trabajo que compartimos", new Friendship (this,amountOfWork)),p);
+    public Pair<Notification<Friendship>, Person> sendWorkLoadModification(int amountOfWork, Person p)
+    {
+        return new Pair<>(new Notification<>(NotificationType.WORKLOAD_MODIFICATION, "Desearia modificar la cantidad de trabajo que compartimos", new Friendship(this, amountOfWork), UUID.randomUUID()), p);
     }
-    
+
 }

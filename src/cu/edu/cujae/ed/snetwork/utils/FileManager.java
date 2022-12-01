@@ -46,7 +46,7 @@ public class FileManager
             }
         }
         
-        picsDirectory = new File(appDirectory, "pics");
+        picsDirectory = new File(getAppDirectory(), "pics");
         if (picsDirectory.exists() == false) picsDirectory.mkdir();
         
         profilePics = new HashMap<>(128);
@@ -59,7 +59,7 @@ public class FileManager
             throw new IOException("Ya existe este perfil");
         }
         
-        File directory = new File(picsDirectory, profileId);
+        File directory = new File(getPicsDirectory(), profileId);
         
         profilePics.put(profileId, directory);
         return directory.mkdir();
@@ -72,6 +72,22 @@ public class FileManager
             throw new IOException("La foto buscada no existe en el sistema de archivos.");
         
         return ImageIO.read(image);
+    }
+
+    /**
+     * @return the appDirectory
+     */
+    public File getAppDirectory()
+    {
+        return appDirectory;
+    }
+
+    /**
+     * @return the picsDirectory
+     */
+    public File getPicsDirectory()
+    {
+        return picsDirectory;
     }
     
 }

@@ -158,30 +158,38 @@ public final class Person
                 {
                     if (monthB > 0 && monthB <= 12)
                     {
-                        if (monthB == 1 || monthB == 3 || monthB == 5 || monthB == 7 || monthB == 8 || monthB == 10 || monthB == 12)
+                        switch (monthB)
                         {
-                            if (dayB > 31)
-                            {
-                                throw new IllegalArgumentException("Fecha no valida");
-                            }
-                        }
-                        else if (monthB == 4 || monthB == 6 || monthB == 9 || monthB == 11)
-                        {
-                            if (dayB > 30)
-                            {
-                                throw new IllegalArgumentException("Fecha no valida");
-                            }
-                        }
-                        else if (monthB == 2)
-                        {
-                            if (yearB % 4 != 0 && dayB > 28)
-                            {
-                                throw new IllegalArgumentException("Fecha no valida");
-                            }
-                            else if (yearB % 4 == 0 && dayB > 29)
-                            {
-                                throw new IllegalArgumentException("Fecha no valida");
-                            }
+                            case 1:
+                            case 3:
+                            case 5:
+                            case 7:
+                            case 8:
+                            case 10:
+                            case 12:
+                                if (dayB > 31)
+                                {
+                                    throw new IllegalArgumentException("Fecha no valida");
+                                }   break;
+                            case 4:
+                            case 6:
+                            case 9:
+                            case 11:
+                                if (dayB > 30)
+                                {
+                                    throw new IllegalArgumentException("Fecha no valida");
+                                }   break;
+                            case 2:
+                                if (yearB % 4 != 0 && dayB > 28)
+                                {
+                                    throw new IllegalArgumentException("Fecha no valida");
+                                }
+                                else if (yearB % 4 == 0 && dayB > 29)
+                                {
+                                    throw new IllegalArgumentException("Fecha no valida");
+                                }   break;
+                            default:
+                                break;
                         }
                     }
                     else

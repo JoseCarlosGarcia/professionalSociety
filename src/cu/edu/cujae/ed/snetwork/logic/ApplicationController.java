@@ -87,6 +87,10 @@ public class ApplicationController
                 }
             }
         }
+        if (result)
+        {
+            pendantNotifications.put(p, new LinkedList<Notification<?>>());
+        }
         return result ? socialNetWork.add(labelCounter++, p) : result;
     }
 
@@ -109,7 +113,7 @@ public class ApplicationController
     {
         if (p.getFirst() != null && p.getLast() != null)
         {
-            pendantNotifications.get(p).add(p.getFirst());
+            pendantNotifications.get(p.getLast()).add(p.getFirst());
         }
     }
 
@@ -133,8 +137,8 @@ public class ApplicationController
                             int label2 = getLabelofPerson(person2);
                             if (label2 >= 0)
                             {
-                                socialNetWork.connect(label1, label2, Weights.makeWeight(amountOfWork));
-                                result = true;
+                                result = socialNetWork.connect(label1, label2, Weights.makeWeight(amountOfWork));
+
                             }
                             else
                             {

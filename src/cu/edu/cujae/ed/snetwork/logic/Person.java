@@ -33,6 +33,7 @@ public final class Person
         setID(ID);
         setCountry(country);
         setProfession(profession);
+        this.password = pasword;
         this.photo = photo;
 
     }

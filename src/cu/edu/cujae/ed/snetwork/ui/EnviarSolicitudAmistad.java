@@ -32,15 +32,16 @@ public class EnviarSolicitudAmistad extends javax.swing.JFrame
 {
     private Person solicitada;
     private Person person;
+    private MainWindow mw;
     
     /**
      * Creates new form EnviarSolicitudAmistad
      * @param solicitada
      */
-    public EnviarSolicitudAmistad(Person solicitada, Person person)
+    public EnviarSolicitudAmistad(Person solicitada, Person person, MainWindow mw)
     {
         initComponents();
-
+        this.mw = mw;
         this.solicitada = solicitada;
         this.person = person;
         jLabelName.setText(solicitada.getName());
@@ -75,7 +76,7 @@ public class EnviarSolicitudAmistad extends javax.swing.JFrame
         jButton2 = new javax.swing.JButton();
         jSpinnerCant = new javax.swing.JSpinner();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Enviar solicitud de amistad");
         setResizable(false);
 
@@ -227,8 +228,11 @@ public class EnviarSolicitudAmistad extends javax.swing.JFrame
         try{
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).add(fr.getFirst());
         JOptionPane.showMessageDialog(null,"Su solicitud de amistad se ha enviado con éxito", "Amistad", JOptionPane.INFORMATION_MESSAGE);
+        mw.getSa().getViewport().undock(mw.getSa());
+        dispose();
        } catch(IllegalArgumentException e){
            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
+           dispose();
        }
         
         

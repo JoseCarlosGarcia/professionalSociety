@@ -78,7 +78,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setText("Foto");
@@ -222,15 +222,17 @@ public class SolicitudAmistad extends javax.swing.JFrame
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
        try{
-        if(ApplicationController.getInstance().friendRequest(friendship, solicitada)){
+           if (ApplicationController.getInstance().friendRequest(friendship, solicitada))
+           {
+               System.out.println("Si");
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
         ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.CONFIRMATION,null, solicitada.getName() + " " + solicitada.getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
         JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().getLastName() + " y usted ahora son amigos", "Amistad", JOptionPane.INFORMATION_MESSAGE);
         }
        } catch(IllegalArgumentException e){
            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
-       }
-        
+        }
+        dispose();
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -238,6 +240,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
         ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.NEGATION,null, solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado tu solicitud de amistad",UUID.randomUUID() ));
+        dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

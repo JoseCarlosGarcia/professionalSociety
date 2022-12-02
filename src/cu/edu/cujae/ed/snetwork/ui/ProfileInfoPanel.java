@@ -16,8 +16,23 @@
  */
 package cu.edu.cujae.ed.snetwork.ui;
 
+import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.utils.Friendship;
+import cu.edu.cujae.ed.snetwork.utils.Notification;
+import cu.edu.cujae.ed.snetwork.utils.NotificationType;
+import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import org.flexdock.docking.DockingConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,17 +40,164 @@ import javax.swing.JPanel;
  */
 public class ProfileInfoPanel extends JPanel
 {
-
+    private SidePanel sp;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileInfoPanel.class);
+    
+    private Person person;
+    private MainWindow mw;
     /**
      * Creates new form ProfileInfoPanel
+     * @param p
      */
-    public ProfileInfoPanel(Person p)
+    public ProfileInfoPanel(Person p, MainWindow mw)
     {
+        initComponents();
+        this.sp = null;
+        this.mw = mw;
+        this.person = p;
         nameText.setText(p.getName());
         apellidosText.setText(p.getLastName());
         paisText.setText(p.getCountry());
         profesionTextField.setText(p.getProfession());
-        initComponents();
+        JMenuItem m1 = new JMenuItem("Modificar Perfil");
+        JMenuItem m2 = new JMenuItem("Eliminar Perfil");
+        JMenuItem m3 = new JMenuItem("Cerrar");
+        JMenuItem m4 = new JMenuItem("Enviar solicitud");
+        JMenuItem m5 = new JMenuItem("Modificar cantidad de trabajos");
+
+        jPopupMenu1.add(m1);
+        jPopupMenu1.add(m2);
+        jPopupMenu1.add(m3);
+        jPopupMenu1.add(m4);
+        jPopupMenu1.add(m5);
+        m1.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                LOGGER.info("Nombre: {}", person.getName());
+                apellidosText.setEditable(true);
+                nameText.setEditable(true);
+                paisText.setEditable(true);
+                profesionTextField.setEditable(true);
+            }
+        });
+        m2.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                ApplicationController.getInstance().deletePerson(person);
+                mw.getCv().getViewport().undock(mw.getCv());
+                mw.setIsOpened(false);
+                mw.getSidePanel().deletePerson(person);
+
+            }
+        });
+        m3.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {                
+                mw.setIsOpened(false);
+                if (mw.getSa() != null)
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                }
+                mw.getCv().getViewport().undock(mw.getCv());
+            }
+        });
+        m4.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {                
+                SidePanel sp = new SidePanel();
+                System.out.println("Si");
+                GraphIterator<Person> gi = (GraphIterator<Person>) ApplicationController.getInstance().
+                    getsocialNetWork().breadthFirstSearchIterator(true);
+                while (gi.hasNext())
+                {                    
+                    Person p = gi.next();
+                    if (!p.equals(person) && !gi.getAllAdjacentVertices().contains(ApplicationController.getInstance().
+                        getLabelofPerson(p)))
+                        sp.addPerson(gi.next());
+                }
+                sp.setVisible(true);
+
+                mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
+                sp.addSelectionListener((var per) ->                {
+                    EnviarSolicitudAmistad es = new EnviarSolicitudAmistad(per, person, mw);
+                    es.setVisible(true);
+                });
+            }
+        });
+
+        m5.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                SidePanel sp = new SidePanel();
+                System.out.println("Si");
+                GraphIterator<Person> gi = (GraphIterator<Person>) ApplicationController.getInstance().
+                    getsocialNetWork().iterator(ApplicationController.getInstance().getLabelofPerson(person));
+                    gi.next(ApplicationController.getInstance().getLabelofPerson(person));
+                    for (Integer i : gi.getAllAdjacentVertices())
+                    {
+                        sp.addPerson(ApplicationController.getInstance().getPerson(i));
+                }
+                sp.setVisible(true);
+
+                mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
+                sp.addSelectionListener((var per) -> 
+                {
+                    EnviarModificarCantidad ec = new EnviarModificarCantidad(per, person, mw);
+                    ec.setVisible(true);
+                });
+            }
+        });
+
+        LinkedList<Notification<?>> listN = (LinkedList<Notification<?>>) ApplicationController.getInstance().
+            getPendantNotifications().get(person);
+        for (Notification<?> n : listN)
+        {
+            JMenuItem j = new JMenuItem(n.getType().toString());
+            j.addActionListener(new AbstractAction()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    if (n.getType().equals(NotificationType.FRINDSHIP_REQUEST))
+                    {
+                        @SuppressWarnings("unchecked")
+                        SolicitudAmistad sa = new SolicitudAmistad((Notification<Friendship>) n, person);
+                        sa.setVisible(true);
+                        jPopupMenu2.remove(j);
+                    }
+                    else if (n.getType().equals(NotificationType.WORKLOAD_MODIFICATION))
+                    {
+                        @SuppressWarnings("unchecked")
+                        ModificarCantidadTrabajo mt = new ModificarCantidadTrabajo((Notification<Friendship>) n, person);
+                        mt.setVisible(true);
+                        jPopupMenu2.remove(j);
+                    }
+                    else if (n.getType().equals(NotificationType.CONFIRMATION))
+                    {
+                        JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
+                                                      JOptionPane.INFORMATION_MESSAGE);
+                        jPopupMenu2.remove(j);
+
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
+                                                      JOptionPane.INFORMATION_MESSAGE);
+                        jPopupMenu2.remove(j);
+                    }
+                }
+            });
+            jPopupMenu2.add(j);
+        }
+
     }
 
     /**
@@ -48,9 +210,11 @@ public class ProfileInfoPanel extends JPanel
     private void initComponents()
     {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jPopupMenu2 = new javax.swing.JPopupMenu();
         jPanel1 = new javax.swing.JPanel();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jButton1 = new javax.swing.JButton();
+        notificationButton = new javax.swing.JToggleButton();
+        optionsMenuButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -72,23 +236,32 @@ public class ProfileInfoPanel extends JPanel
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
+        setName("Perfil"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
         jPanel1.setMaximumSize(new java.awt.Dimension(32767, 16));
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        jToggleButton1.setText("Notificaciones");
-        jPanel1.add(jToggleButton1);
-
-        jButton1.setText("...");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        notificationButton.setText("Notificaciones");
+        notificationButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                notificationButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1);
+        jPanel1.add(notificationButton);
+
+        optionsMenuButton.setText("...");
+        optionsMenuButton.setComponentPopupMenu(jPopupMenu1);
+        optionsMenuButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                optionsMenuButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(optionsMenuButton);
 
         add(jPanel1);
 
@@ -102,21 +275,56 @@ public class ProfileInfoPanel extends JPanel
 
         nameText.setEditable(false);
         nameText.setText("jTextField1");
+        nameText.addFocusListener(new java.awt.event.FocusAdapter()
+        {
+            public void focusLost(java.awt.event.FocusEvent evt)
+            {
+                nameTextFocusLost(evt);
+            }
+        });
+        nameText.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                nameTextActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Apellidos");
 
-        jLabel4.setText("Pais:");
+        jLabel4.setText("País:");
 
-        jLabel5.setText("Profesion:");
+        jLabel5.setText("Profesión:");
 
         apellidosText.setEditable(false);
         apellidosText.setText("jTextField2");
+        apellidosText.addFocusListener(new java.awt.event.FocusAdapter()
+        {
+            public void focusLost(java.awt.event.FocusEvent evt)
+            {
+                apellidosTextFocusLost(evt);
+            }
+        });
 
         paisText.setEditable(false);
         paisText.setText("jTextField3");
+        paisText.addFocusListener(new java.awt.event.FocusAdapter()
+        {
+            public void focusLost(java.awt.event.FocusEvent evt)
+            {
+                paisTextFocusLost(evt);
+            }
+        });
 
         profesionTextField.setEditable(false);
         profesionTextField.setText("jTextField4");
+        profesionTextField.addFocusListener(new java.awt.event.FocusAdapter()
+        {
+            public void focusLost(java.awt.event.FocusEvent evt)
+            {
+                profesionTextFieldFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -157,7 +365,7 @@ public class ProfileInfoPanel extends JPanel
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(profesionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Información General", jPanel5);
@@ -198,15 +406,46 @@ public class ProfileInfoPanel extends JPanel
         add(jPanel2);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-    {//GEN-HEADEREND:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void optionsMenuButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_optionsMenuButtonActionPerformed
+    {//GEN-HEADEREND:event_optionsMenuButtonActionPerformed
+        jPopupMenu1.show(optionsMenuButton, optionsMenuButton.getHorizontalAlignment(), optionsMenuButton.
+                         getVerticalAlignment());
+    }//GEN-LAST:event_optionsMenuButtonActionPerformed
+
+    private void notificationButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_notificationButtonActionPerformed
+    {//GEN-HEADEREND:event_notificationButtonActionPerformed
+        jPopupMenu2.show(notificationButton, notificationButton.getHorizontalAlignment(), notificationButton.
+                         getVerticalAlignment());
+    }//GEN-LAST:event_notificationButtonActionPerformed
+
+    private void nameTextActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nameTextActionPerformed
+    {//GEN-HEADEREND:event_nameTextActionPerformed
+        
+    }//GEN-LAST:event_nameTextActionPerformed
+
+    private void nameTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_nameTextFocusLost
+    {//GEN-HEADEREND:event_nameTextFocusLost
+        person.setName(nameText.getText());
+    }//GEN-LAST:event_nameTextFocusLost
+
+    private void apellidosTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_apellidosTextFocusLost
+    {//GEN-HEADEREND:event_apellidosTextFocusLost
+        person.setLastName(apellidosText.getText());
+    }//GEN-LAST:event_apellidosTextFocusLost
+
+    private void paisTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_paisTextFocusLost
+    {//GEN-HEADEREND:event_paisTextFocusLost
+        person.setCountry(paisText.getText());
+    }//GEN-LAST:event_paisTextFocusLost
+
+    private void profesionTextFieldFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_profesionTextFieldFocusLost
+    {//GEN-HEADEREND:event_profesionTextFieldFocusLost
+        person.setProfession(profesionTextField.getText());
+    }//GEN-LAST:event_profesionTextFieldFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosText;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -219,13 +458,16 @@ public class ProfileInfoPanel extends JPanel
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JTree jTree1;
     private javax.swing.JTree jTree2;
     private javax.swing.JTextField nameText;
+    private javax.swing.JToggleButton notificationButton;
+    private javax.swing.JButton optionsMenuButton;
     private javax.swing.JTextField paisText;
     private javax.swing.JTextField profesionTextField;
     // End of variables declaration//GEN-END:variables

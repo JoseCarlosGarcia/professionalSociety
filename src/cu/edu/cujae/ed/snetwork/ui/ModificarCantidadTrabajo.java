@@ -34,6 +34,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     private Friendship friendship;
     private Person solicitada;
     private Notification<Friendship> n;
+
     /**
      * Creates new form ModificarCantidadTrabajo
      * @param n
@@ -81,7 +82,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
         jLabel7 = new javax.swing.JLabel();
         jLabelTrabajosNuevos = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Modificar cantidad de trabajo");
         setResizable(false);
 
@@ -236,13 +237,19 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
         {
             if(ApplicationController.getInstance().modifyAmountOfWork(friendship, solicitada))
             {
+                
                 ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
                 JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().getLastName() + " y usted ahora comparten " + friendship.getAmountOfWork() + " de trabajo" , "Nueva cantidad de trabajos", JOptionPane.INFORMATION_MESSAGE);
-                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.CONFIRMATION,null, solicitada.getName() + " " + solicitada.getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten",UUID.randomUUID()));
+                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(
+                    new Notification<>(NotificationType.CONFIRMATION, null, solicitada.getName() + " " + solicitada.
+                                       getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten",
+                                       UUID.randomUUID()));
+                dispose();
             }
         } catch(IllegalArgumentException e)
         {
             JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
+            dispose();
         }
 
     }//GEN-LAST:event_jButton2ActionPerformed

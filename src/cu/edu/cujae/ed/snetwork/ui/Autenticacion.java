@@ -63,12 +63,15 @@ public class Autenticacion extends javax.swing.JDialog
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Autenticación");
+        setAlwaysOnTop(true);
+        setMaximumSize(new java.awt.Dimension(310, 100));
+        setModal(true);
+        setResizable(false);
 
         jLabel1.setText("Usuario:");
 
         jLabel2.setText("Contraseña:");
-
-        jPassword.setText("jPasswordField1");
 
         jLabelUsuario.setText("jLabel3");
 
@@ -142,16 +145,15 @@ public class Autenticacion extends javax.swing.JDialog
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 3, Short.MAX_VALUE))
+                .addGap(0, 4, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
@@ -161,9 +163,13 @@ public class Autenticacion extends javax.swing.JDialog
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
-        if (jPassword.getPassword().equals(pasword) ){
-            ProfileInfoPanel pip = new ProfileInfoPanel(person);
-            mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f);
+
+        if (String.valueOf(jPassword.getPassword()).equals(pasword))
+        {
+            dispose();
+            ProfileInfoPanel pip = new ProfileInfoPanel(person, mw);
+            mw.setIsOpened(true);
+            mw.setCv(mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f));
         } else {
             jLabelCI.setVisible(true);
         }

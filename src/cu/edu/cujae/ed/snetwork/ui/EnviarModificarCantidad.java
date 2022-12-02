@@ -32,17 +32,18 @@ public class EnviarModificarCantidad extends javax.swing.JFrame
 {
     private Person solicitada;
     private Person person;
-    
+    private MainWindow mw;
     /**
      * Creates new form EnviarModificarCantidad
      * @param solicitada
      */
-    public EnviarModificarCantidad(Person solicitada, Person person)
+    public EnviarModificarCantidad(Person solicitada, Person person, MainWindow mw)
     {
         initComponents();
 
         this.solicitada = solicitada;
         this.person = person;
+        this.mw = mw;
         jLabelName.setText(solicitada.getName());
         jLabelApellidos.setText(solicitada.getLastName());
         jLabelPais.setText(solicitada.getCountry());
@@ -79,7 +80,7 @@ public class EnviarModificarCantidad extends javax.swing.JFrame
         jLabel7 = new javax.swing.JLabel();
         jLabelTrabajos = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Modificar cantidad de trabajos");
         setResizable(false);
 
@@ -243,8 +244,11 @@ public class EnviarModificarCantidad extends javax.swing.JFrame
         try{
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).add(fr.getFirst());
         JOptionPane.showMessageDialog(null,"Su solicitud para modificar la cantidad de trabajo se ha enviado con éxito", "Modificar cantidad de trabajo", JOptionPane.INFORMATION_MESSAGE);
+        mw.getSa().getViewport().undock(mw.getSa());
+        dispose();
        } catch(IllegalArgumentException e){
-           JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
+            dispose();
        }
         
         

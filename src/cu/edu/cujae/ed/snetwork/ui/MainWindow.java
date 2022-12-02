@@ -25,6 +25,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -32,26 +34,78 @@ import org.flexdock.view.View;
  */
 public class MainWindow extends javax.swing.JFrame
 {
+
+    private Logger logger;
     private SidePanel sidePanel;
     private JPanel graphView;
     private View firstDocked = null;
+    private View first = null;
     private final FileManager fileManager;
+    private boolean isOpened;
+    private CloseableView cv;
+    private CloseableView sa;
+
+    public CloseableView getSa()
+    {
+        return sa;
+    }
+
+    public void setSa(CloseableView sa)
+    {
+        this.sa = sa;
+    }
+
+    public CloseableView getCv()
+    {
+        return cv;
+    }
+
+    public void setCv(CloseableView cv)
+    {
+        this.cv = cv;
+    }
+
+    public boolean isIsOpened()
+    {
+        return isOpened;
+    }
+
+    public void setIsOpened(boolean isOpened)
+    {
+        this.isOpened = isOpened;
+    }
+
     /**
      * Creates new form MainWindow
      */
     public MainWindow(FileManager fileManager)
     {
         initComponents();
+        this.isOpened = false;
         this.sidePanel = new SidePanel();
         this.graphView = new JPanel();
         this.fileManager = fileManager;      
         dock(graphView, DockingConstants.CENTER_REGION, 1.0f);
-        dock(sidePanel, DockingConstants.WEST_REGION , 0.25f);
+        first = dock(sidePanel, DockingConstants.WEST_REGION, 0.40f);
         
-        sidePanel.addSelectionListener((object) -> 
+        logger = LoggerFactory.getLogger(MainWindow.class);
+        
+        sidePanel.addSelectionListener((var person) -> 
+ 
         {
-            Autenticacion a = new Autenticacion(this, false, object);
+            if (!isOpened)
+            {
+            Autenticacion a = new Autenticacion(this, false, person);
             a.setVisible(true);
+            
+                logger.info("{}, pwd {} y pais {}", person.getName(), person.getPassword(), person.getCountry());
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Cierre el perfil actual para abrir uno nuevo", "",
+                                              JOptionPane.INFORMATION_MESSAGE);
+            }
+
         });
     }
 
@@ -199,7 +253,24 @@ public class MainWindow extends javax.swing.JFrame
         System.exit(0);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
     
-    public final void dock(JComponent dockable, String region, float size){
+    public final CloseableView dockSP(JComponent dockable, String region, float size){
+        CloseableView cv = new CloseableView(dockable.getName());
+        cv.setContentPane(dockable);
+
+        if (dockingPort.getDockables().isEmpty())
+        {
+            dockingPort.dock(cv);
+            first = cv;
+        }
+        else
+        {
+            first.dock(cv, region, size);
+        }
+        return cv;
+    }
+    
+    public final CloseableView dock(JComponent dockable, String region, float size)
+    {
         CloseableView cv = new CloseableView(dockable.getName());
         cv.setContentPane(dockable);
         
@@ -212,6 +283,12 @@ public class MainWindow extends javax.swing.JFrame
         {
             firstDocked.dock(cv, region, size);
         }
+        return cv;
+    }
+    
+    public void closeCv()
+    {
+        dockingPort.undock(cv);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -226,4 +303,8 @@ public class MainWindow extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     // End of variables declaration//GEN-END:variables
+ public SidePanel getSidePanel()
+    {
+        return sidePanel;
+    }
 }

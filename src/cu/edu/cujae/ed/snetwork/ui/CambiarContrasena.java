@@ -64,6 +64,7 @@ public class CambiarContrasena extends javax.swing.JDialog
         jPasswordField1 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setModal(true);
         setResizable(false);
 
         jLabel1.setText("Usuario:");

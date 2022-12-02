@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
  *
  * @author Jose
  */
-public class FileManager
+public final class FileManager
 {
     public static final String APP_DIRECTORY = "./snet/data";
     

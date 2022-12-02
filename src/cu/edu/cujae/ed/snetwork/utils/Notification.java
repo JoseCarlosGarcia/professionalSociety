@@ -21,13 +21,14 @@ import java.util.UUID;
 /**
  *
  * @author Jose
+ * @param <T>
  */
 public final class Notification<T>
 {
-    private NotificationType type;
-    private UUID uuid;
-    private String message;
-    private T data;
+    private final NotificationType type;
+    private final UUID uuid;
+    private final String message;
+    private final T data;
 
     public Notification(NotificationType type, String message, T data, UUID uuid)
     {
@@ -59,6 +60,14 @@ public final class Notification<T>
     public T getData()
     {
         return data;
+    }
+
+    /**
+     * @return the uuid
+     */
+    public UUID getUuid()
+    {
+        return uuid;
     }
     
        

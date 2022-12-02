@@ -45,9 +45,14 @@ public class MainWindow extends javax.swing.JFrame
         this.sidePanel = new SidePanel();
         this.graphView = new JPanel();
         this.fileManager = fileManager;      
-        
         dock(graphView, DockingConstants.CENTER_REGION, 1.0f);
         dock(sidePanel, DockingConstants.WEST_REGION , 0.25f);
+        
+        sidePanel.addSelectionListener((object) -> 
+        {
+            Autenticacion a = new Autenticacion(this, false, object);
+            a.setVisible(true);
+        });
     }
 
     /**

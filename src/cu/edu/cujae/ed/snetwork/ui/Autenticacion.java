@@ -17,6 +17,7 @@
 package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import org.flexdock.docking.DockingConstants;
 
 /**
  *
@@ -24,6 +25,8 @@ import cu.edu.cujae.ed.snetwork.logic.Person;
  */
 public class Autenticacion extends javax.swing.JDialog
 {
+    private MainWindow mw;
+    private final Person person;
     private String pasword;
     /**
      * Creates new form Autenticacion
@@ -32,7 +35,9 @@ public class Autenticacion extends javax.swing.JDialog
     {
         super(parent, modal);
         initComponents();
+        this.person = p;
         this.pasword = p.getPassword();
+        this.mw = (MainWindow) parent;
         jLabelUsuario.setText(p.getName() + " " + p.getLastName());
         jLabelCI.setVisible(false);
         
@@ -157,7 +162,8 @@ public class Autenticacion extends javax.swing.JDialog
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
     {//GEN-HEADEREND:event_jButton2ActionPerformed
         if (jPassword.getPassword().equals(pasword) ){
-            //abrir perfil de la persona
+            ProfileInfoPanel pip = new ProfileInfoPanel(person);
+            mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f);
         } else {
             jLabelCI.setVisible(true);
         }

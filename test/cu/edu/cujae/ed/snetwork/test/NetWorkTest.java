@@ -11,6 +11,8 @@ import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,16 +30,19 @@ public class NetWorkTest
     public static void main(String[] args)
     {
         ApplicationController snet = ApplicationController.getInstance();
-        Person brian = new Person("Brian Michel", "Morales", "02102768988", "Australia", "Ingeniero Automatico","16_03");
-        Person jose = new Person("Jose Carlos", "Garcia Cruz", "01081268460", "Espana", "Analista de requisitos","0102");
-        Person nanda = new Person("Ananda", "Morales", "02090566997", "Rusia", "Redactora de informes","0203");
-        Person camilo = new Person("Camilo", "Chamorro", "01080725688", "Cuba", "Probador de software","0205");
-        Person amanda = new Person("Amanda", "Mendez", "02091868898", "Mexico", "Disenadora","0206");
-        Person javi = new Person("Javier", "Marrero", "01040368898","Alemania","Disenador de Software","0208");
-        Person amaya = new Person ("Amaya","Delgado", "02111268898","Inglaterra", "Desarrolladora de videojuegos","0209");
-        Person dory = new Person ("Barbara", "Teresa", "04031568898", "Grecia", "Psicologa","0503");
-        Person leo = new Person ("Leo", "Zayas", "04031529685","Brasil", "Arquitecto","0213");
-
+        Person brian
+                   = new Person("Brian Michel", "Morales", "02102768988", "Australia", "Ingeniero Automatico", "16_03");
+        Person jose
+                   = new Person("Jose Carlos", "Garcia Cruz", "01081268460", "Espana", "Analista de requisitos", "0102");
+        Person nanda = new Person("Ananda", "Morales", "02090566997", "Rusia", "Redactora de informes", "0203");
+        Person camilo = new Person("Camilo", "Chamorro", "01080725688", "Cuba", "Probador de software", "0205");
+        Person amanda = new Person("Amanda", "Mendez", "02091868898", "Mexico", "Disenadora", "0206");
+        Person javi = new Person("Javier", "Marrero", "01040368898", "Alemania", "Disenador de Software", "0208");
+        Person amaya = new Person("Amaya", "Delgado", "02111268898", "Inglaterra", "Desarrolladora de videojuegos",
+                                  "0209");
+        Person dory = new Person("Barbara", "Teresa", "04031568898", "Grecia", "Psicologa", "0503");
+        Person leo = new Person("Leo", "Zayas", "04031529685", "Brasil", "Arquitecto", "0213");
+        
         snet.addPerson(brian);
         snet.addPerson(jose);
         snet.addPerson(nanda);
@@ -47,7 +52,7 @@ public class NetWorkTest
         snet.addPerson(amaya);
         snet.addPerson(dory);
         snet.addPerson(leo);
-        
+
         /*snet.friendRequest(new Friendship (brian, 1), jose);
         snet.friendRequest(new Friendship (brian, 1), nanda);
         snet.friendRequest(new Friendship (brian, 1), camilo);
@@ -67,28 +72,26 @@ public class NetWorkTest
                 System.out.println(p.getName());
             }
         }*/
-        
-        
-        snet.friendRequest(new Friendship (brian,2), jose);
-        snet.friendRequest(new Friendship (brian,2), amanda);
-        snet.friendRequest(new Friendship (brian,2), camilo);
-        snet.friendRequest(new Friendship (brian,4), javi);
-        snet.friendRequest(new Friendship (brian,3), amaya);
-        snet.friendRequest(new Friendship (brian,4), dory);
-        snet.friendRequest(new Friendship (jose,6), amanda);
-        snet.friendRequest(new Friendship (jose,5), nanda);
-        snet.friendRequest(new Friendship (camilo,8), amanda);
+        snet.friendRequest(new Friendship(brian, 2), jose);
+        snet.friendRequest(new Friendship(brian, 2), amanda);
+        snet.friendRequest(new Friendship(brian, 2), camilo);
+        snet.friendRequest(new Friendship(brian, 4), javi);
+        snet.friendRequest(new Friendship(brian, 3), amaya);
+        snet.friendRequest(new Friendship(brian, 4), dory);
+        snet.friendRequest(new Friendship(jose, 6), amanda);
+        snet.friendRequest(new Friendship(jose, 5), nanda);
+        snet.friendRequest(new Friendship(camilo, 8), amanda);
         GraphIterator<Person> it = snet.getsocialNetWork().iterator(0);
         it.next(0);
         snet.getCollaborationExpansionTree(it);
-        Tree <Person> tree = snet.getCollaborationExpansionTree(it);
+        Tree<Person> tree = snet.getCollaborationExpansionTree(it);
         
         LinkedList<Person> list = snet.getResearchLeaders();
-        for(Person p : list){
+        for (Person p : list)
+        {
             System.out.println(p.getName());
         }
-        
-        
+
         /*snet.getsocialNetWork().connect(0, 1, Weights.makeWeight(4));
         snet.getsocialNetWork().connect(0, 2, Weights.makeWeight(3));
         snet.getsocialNetWork().connect(1, 2, Weights.makeWeight(5));
@@ -123,14 +126,18 @@ public class NetWorkTest
         for(Person p : aux3){
             System.out.println(p.getName());
         }
-        */
-        
+         */
         JFrame frame = new JFrame("pruebita");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setPreferredSize(new Dimension(400, 200));
         
         SidePanel panel = new SidePanel();
         frame.add(panel);
+        
+        panel.addSelectionListener((object) -> 
+        {
+            System.out.println("Es la pinga para " + object.getName());
+        });
         
         GraphIterator<Person> gi = (GraphIterator<Person>) snet.getsocialNetWork().depthFirstSearchIterator(true);
         while (gi.hasNext())

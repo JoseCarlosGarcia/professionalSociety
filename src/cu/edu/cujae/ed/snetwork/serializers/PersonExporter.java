@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Amanda
+ * @author Amanda Méndez 
  */
 public class PersonExporter
 {

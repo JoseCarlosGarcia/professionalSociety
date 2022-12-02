@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 CUJAE
+ * Copyright (C) 2022 Amanda Méndez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,6 @@ public class NotificationSerializer<T>
                 
         if (exception != null)
             throw exception;
-        
         
         return list;
     }

@@ -66,7 +66,7 @@ public class SideBarButton extends JPanel
         nameLabel = new javax.swing.JLabel();
         infoLabel = new javax.swing.JLabel();
 
-        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.SystemColor.activeCaption));
         setMaximumSize(new java.awt.Dimension(200, 32));
         setMinimumSize(new java.awt.Dimension(200, 32));
         setPreferredSize(new java.awt.Dimension(200, 32));

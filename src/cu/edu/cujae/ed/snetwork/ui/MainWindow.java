@@ -44,6 +44,17 @@ public class MainWindow extends javax.swing.JFrame
     private boolean isOpened;
     private CloseableView cv;
     private CloseableView sa;
+    private boolean isOSE;
+
+    public boolean isIsOSE()
+    {
+        return isOSE;
+    }
+
+    public void setIsOSE(boolean isOSE)
+    {
+        this.isOSE = isOSE;
+    }
 
     public CloseableView getSa()
     {
@@ -84,7 +95,8 @@ public class MainWindow extends javax.swing.JFrame
         this.isOpened = false;
         this.sidePanel = new SidePanel();
         this.graphView = new JPanel();
-        this.fileManager = fileManager;      
+        this.fileManager = fileManager;
+        this.isOSE = false;
         dock(graphView, DockingConstants.CENTER_REGION, 1.0f);
         first = dock(sidePanel, DockingConstants.WEST_REGION, 0.40f);
         

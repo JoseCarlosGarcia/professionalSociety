@@ -17,6 +17,11 @@
 package cu.edu.cujae.ed.snetwork.logic;
 
 import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubContrastIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubDarkContrastIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatLightOwlContrastIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatLightOwlIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialOceanicContrastIJTheme;
 import cu.edu.cujae.ed.snetwork.ui.MainWindow;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
@@ -47,7 +52,7 @@ public class Launcher
     {
         try
         {
-            UIManager.setLookAndFeel(new FlatLightFlatIJTheme());
+            UIManager.setLookAndFeel(new FlatLightOwlContrastIJTheme());
         }
         catch (UnsupportedLookAndFeelException ex)
         {

@@ -224,10 +224,14 @@ public class SolicitudAmistad extends javax.swing.JFrame
        try{
            if (ApplicationController.getInstance().friendRequest(friendship, solicitada))
            {
-               System.out.println("Si");
-        ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
-        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.CONFIRMATION,null, solicitada.getName() + " " + solicitada.getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
-        JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().getLastName() + " y usted ahora son amigos", "Amistad", JOptionPane.INFORMATION_MESSAGE);
+               System.out.println("Siiiiii entrooooo");
+               ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
+               ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(
+                   new Notification<>(NotificationType.CONFIRMATION, null, solicitada.getName() + " " + solicitada.
+                                      getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
+               JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().
+                                             getLastName() + " y usted ahora son amigos", "Amistad",
+                                             JOptionPane.INFORMATION_MESSAGE);
         }
        } catch(IllegalArgumentException e){
            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);

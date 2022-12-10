@@ -137,7 +137,17 @@ public class ApplicationController
                             int label2 = getLabelofPerson(person2);
                             if (label2 >= 0)
                             {
-                                result = socialNetWork.connect(label1, label2, Weights.makeWeight(amountOfWork));
+                                //GraphIterator<Person> it = (GraphIterator<Person>) socialNetWork.iterator();
+                                //it.next(label1);
+                                if (!socialNetWork.isVertexAdjacent(label2, label2))
+                                {
+                                    socialNetWork.connect(label1, label2, Weights.makeWeight(amountOfWork));
+                                    result = true;
+                                }
+                                else
+                                {
+                                    throw new IllegalArgumentException("Ya son amigos");
+                                }
 
                             }
                             else

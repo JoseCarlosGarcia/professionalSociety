@@ -229,6 +229,7 @@ public class EnviarSolicitudAmistad extends javax.swing.JFrame
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).add(fr.getFirst());
         JOptionPane.showMessageDialog(null,"Su solicitud de amistad se ha enviado con éxito", "Amistad", JOptionPane.INFORMATION_MESSAGE);
         mw.getSa().getViewport().undock(mw.getSa());
+        mw.setIsOSE(false);
         dispose();
        } catch(IllegalArgumentException e){
            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);

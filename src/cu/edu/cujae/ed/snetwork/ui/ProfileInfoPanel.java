@@ -85,44 +85,59 @@ public class ProfileInfoPanel extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
+                if (JOptionPane.
+                    showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", TOOL_TIP_TEXT_KEY,
+                                      JOptionPane.YES_NO_OPTION) == 0)
+                {
                 ApplicationController.getInstance().deletePerson(person);
                 mw.getCv().getViewport().undock(mw.getCv());
                 mw.setIsOpened(false);
-                mw.getSidePanel().deletePerson(person);
+                    mw.getSidePanel().deletePerson(person);
+                }
 
             }
         });
+
         m3.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {                
                 mw.setIsOpened(false);
-                if (mw.getSa() != null)
+                if (mw.getSa() != null && mw.isIsOSE())
                 {
                     mw.getSa().getViewport().undock(mw.getSa());
                 }
                 mw.getCv().getViewport().undock(mw.getCv());
             }
         });
+
         m4.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
-            {                
+            {
+                if (mw.isIsOSE())
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                    mw.setIsOSE(false);
+                }
                 SidePanel sp = new SidePanel();
                 System.out.println("Si");
                 GraphIterator<Person> gi = (GraphIterator<Person>) ApplicationController.getInstance().
                     getsocialNetWork().breadthFirstSearchIterator(true);
+                int label = ApplicationController.getInstance().getLabelofPerson(person);
                 while (gi.hasNext())
                 {                    
                     Person p = gi.next();
-                    if (!p.equals(person) && !gi.getAllAdjacentVertices().contains(ApplicationController.getInstance().
-                        getLabelofPerson(p)))
-                        sp.addPerson(gi.next());
+                    System.out.println(p.getName());
+                    if (!p.equals(person) && !gi.isAdjacent(label))
+                    {
+                        sp.addPerson(p);
+                    }
                 }
                 sp.setVisible(true);
-
+                mw.setIsOSE(true);
                 mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
                 sp.addSelectionListener((var per) ->                {
                     EnviarSolicitudAmistad es = new EnviarSolicitudAmistad(per, person, mw);
@@ -136,6 +151,11 @@ public class ProfileInfoPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                if (mw.isIsOSE())
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                    mw.setIsOSE(false);
+                }
                 SidePanel sp = new SidePanel();
                 System.out.println("Si");
                 GraphIterator<Person> gi = (GraphIterator<Person>) ApplicationController.getInstance().
@@ -146,7 +166,7 @@ public class ProfileInfoPanel extends JPanel
                         sp.addPerson(ApplicationController.getInstance().getPerson(i));
                 }
                 sp.setVisible(true);
-
+                mw.setIsOSE(true);
                 mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
                 sp.addSelectionListener((var per) -> 
                 {
@@ -182,7 +202,7 @@ public class ProfileInfoPanel extends JPanel
                     }
                     else if (n.getType().equals(NotificationType.CONFIRMATION))
                     {
-                        JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
+                        JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",
                                                       JOptionPane.INFORMATION_MESSAGE);
                         jPopupMenu2.remove(j);
 
@@ -408,12 +428,22 @@ public class ProfileInfoPanel extends JPanel
 
     private void optionsMenuButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_optionsMenuButtonActionPerformed
     {//GEN-HEADEREND:event_optionsMenuButtonActionPerformed
+        if (mw.isIsOSE())
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                    mw.setIsOSE(false);
+        }
         jPopupMenu1.show(optionsMenuButton, optionsMenuButton.getHorizontalAlignment(), optionsMenuButton.
                          getVerticalAlignment());
     }//GEN-LAST:event_optionsMenuButtonActionPerformed
 
     private void notificationButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_notificationButtonActionPerformed
     {//GEN-HEADEREND:event_notificationButtonActionPerformed
+        if (mw.isIsOSE())
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                    mw.setIsOSE(false);
+        }
         jPopupMenu2.show(notificationButton, notificationButton.getHorizontalAlignment(), notificationButton.
                          getVerticalAlignment());
     }//GEN-LAST:event_notificationButtonActionPerformed

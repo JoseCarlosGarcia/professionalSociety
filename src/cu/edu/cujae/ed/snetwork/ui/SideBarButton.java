@@ -19,6 +19,8 @@ package cu.edu.cujae.ed.snetwork.ui;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -48,6 +50,10 @@ public class SideBarButton extends JPanel
         nameLabel.setText(person.getName() + " " + person.getLastName());
         infoLabel.setText(person.getProfession() + " - " + person.getCountry());
 
+        if (person.getPhoto() != null)
+        {
+            photoLabel.setIcon(new ImageIcon(person.getPhoto().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        }
     }
 
     /**
@@ -88,7 +94,10 @@ public class SideBarButton extends JPanel
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
         add(filler2);
 
-        photoLabel.setText("Foto");
+        photoLabel.setMaximumSize(new java.awt.Dimension(32, 32));
+        photoLabel.setMinimumSize(new java.awt.Dimension(32, 32));
+        photoLabel.setName(""); // NOI18N
+        photoLabel.setPreferredSize(new java.awt.Dimension(32, 32));
         add(photoLabel);
         add(filler1);
 
@@ -188,4 +197,16 @@ public class SideBarButton extends JPanel
     {
         return person;
     }
+
+    @Override
+    public void revalidate()
+    {
+        super.revalidate();
+        
+        if (person != null && person.getPhoto() != null)
+        {
+            photoLabel.setIcon(new ImageIcon(person.getPhoto().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        }
+    }
+    
 }

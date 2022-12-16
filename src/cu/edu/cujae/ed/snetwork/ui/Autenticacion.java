@@ -17,6 +17,8 @@
 package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import java.io.File;
+import javax.imageio.ImageIO;
 import org.flexdock.docking.DockingConstants;
 
 /**
@@ -170,6 +172,8 @@ public class Autenticacion extends javax.swing.JDialog
             ProfileInfoPanel pip = new ProfileInfoPanel(person, mw);
             mw.setIsOpened(true);
             mw.setCv(mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f));
+            mw.getCv().setTitle(person.getName());
+            mw.getCv().setTabText(person.getName());
         } else {
             jLabelCI.setVisible(true);
         }

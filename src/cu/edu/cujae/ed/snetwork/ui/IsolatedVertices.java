@@ -17,7 +17,16 @@
 package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.utils.FileManager;
+import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
+import static java.awt.image.ImageObserver.HEIGHT;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -26,14 +35,21 @@ import javax.swing.table.DefaultTableModel;
  */
 public class IsolatedVertices extends javax.swing.JDialog
 {
-    
+    private LinkedList<Person> persons;
+    private FileManager fileManager;
     /**
      * Creates new form IsolatedVertices
+     * @param parent
+     * @param modal
+     * @param fileManager
+     * @param persons
      */
-    public IsolatedVertices(java.awt.Frame parent, boolean modal, List<Person> persons)
+    public IsolatedVertices(java.awt.Frame parent, boolean modal, List<Person> persons, FileManager fileManager)
     {
         super(parent, modal);
         initComponents();
+        this.persons = (LinkedList<Person>) persons;
+        this.fileManager = fileManager;
         for (Person p : persons){
             ((DefaultTableModel) jTable1.getModel()).addRow(new Object[] {p.getName(), p.getLastName(),p.getCountry(), p.getProfession()});
         }
@@ -53,6 +69,7 @@ public class IsolatedVertices extends javax.swing.JDialog
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -96,6 +113,19 @@ public class IsolatedVertices extends javax.swing.JDialog
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
+        jButton2.setIcon(UIManager.getIcon("FileView.floppyDriveIcon"));
+        jButton2.setMaximumSize(new java.awt.Dimension(32, 32));
+        jButton2.setMinimumSize(new java.awt.Dimension(32, 32));
+        jButton2.setPreferredSize(new java.awt.Dimension(32, 32));
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton2);
+
         jButton1.setText("Cerrar");
         jButton1.addActionListener(new java.awt.event.ActionListener()
         {
@@ -117,6 +147,19 @@ public class IsolatedVertices extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
+    {//GEN-HEADEREND:event_jButton2ActionPerformed
+        try
+            {
+                SaveTXT.saveIsolatedVertices(persons, fileManager);
+                JOptionPane.showMessageDialog(this, "Se ha guardado con éxito el documento", "Completado", HEIGHT, null);
+            }
+            catch (IOException ex)
+            {
+                java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -124,6 +167,7 @@ public class IsolatedVertices extends javax.swing.JDialog
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

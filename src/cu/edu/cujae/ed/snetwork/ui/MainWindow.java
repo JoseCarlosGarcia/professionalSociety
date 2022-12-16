@@ -19,10 +19,20 @@ package cu.edu.cujae.ed.snetwork.ui;
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
+import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
+import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.view.View;
 import org.slf4j.Logger;
@@ -41,6 +51,11 @@ public class MainWindow extends javax.swing.JFrame
     private View firstDocked = null;
     private View first = null;
     private final FileManager fileManager;
+
+    public FileManager getFileManager()
+    {
+        return fileManager;
+    }
     private boolean isOpened;
     private CloseableView cv;
     private CloseableView sa;
@@ -89,13 +104,17 @@ public class MainWindow extends javax.swing.JFrame
     /**
      * Creates new form MainWindow
      */
-    public MainWindow(FileManager fileManager)
+    public MainWindow(FileManager fileManager) throws IOException
     {
         initComponents();
+        this.fileManager = fileManager;
+        File file = new File(this.fileManager.getAppDirectory() + "/icon.jpg");
+
+        setIconImage(ImageIO.read(file));
         this.isOpened = false;
         this.sidePanel = new SidePanel();
         this.graphView = new JPanel();
-        this.fileManager = fileManager;
+
         this.isOSE = false;
         dock(graphView, DockingConstants.CENTER_REGION, 1.0f);
         first = dock(sidePanel, DockingConstants.WEST_REGION, 0.40f);
@@ -134,6 +153,8 @@ public class MainWindow extends javax.swing.JFrame
         dockingPort = new org.flexdock.view.Viewport();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -149,6 +170,17 @@ public class MainWindow extends javax.swing.JFrame
         getContentPane().add(dockingPort, java.awt.BorderLayout.CENTER);
 
         jMenu2.setText("App");
+
+        jMenuItem6.setText("Insertar Usuario ");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem6);
+        jMenu2.add(jSeparator2);
 
         jMenuItem2.setText("Acerca de ...");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener()
@@ -230,7 +262,7 @@ public class MainWindow extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItem3ActionPerformed
         try {
         LinkedList<Person> list = ApplicationController.getInstance().getResearchLeaders();
-        LideresInvestigacion li = new LideresInvestigacion(this, false, list);
+            LideresInvestigacion li = new LideresInvestigacion(this, false, list, fileManager);
         li.setVisible(true);
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(null, "No existen personas en la red social", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -246,9 +278,19 @@ public class MainWindow extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItem5ActionPerformed
         try {
         LinkedList<Person> p = ApplicationController.getInstance().isolatedPersons();
-        IsolatedVertices iv = new IsolatedVertices(this, false, p);
+            IsolatedVertices iv = new IsolatedVertices(this, false, p, fileManager);
         iv.setVisible(true);
-        } catch (IllegalStateException ex) {
+            try
+            {
+                SaveTXT.saveIsolatedVertices(p, fileManager);
+            }
+            catch (IOException ex)
+            {
+                java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        catch (IllegalStateException ex)
+        {
             JOptionPane.showMessageDialog(null, "No existen personas en la red social", "Información", JOptionPane.INFORMATION_MESSAGE);
         }
         
@@ -256,7 +298,8 @@ public class MainWindow extends javax.swing.JFrame
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem4ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem4ActionPerformed
-        Communities c = new Communities(this, false);
+        ArrayList<ArrayList<Person>> communities = ApplicationController.getInstance().getCommunities();
+        Communities c = new Communities(this, false, communities,fileManager);
         c.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
@@ -264,6 +307,12 @@ public class MainWindow extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
         System.exit(0);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem6ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem6ActionPerformed
+        InsertarPersona ip = new InsertarPersona(this);
+        ip.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
     
     public final CloseableView dockSP(JComponent dockable, String region, float size){
         CloseableView cv = new CloseableView(dockable.getName());
@@ -285,7 +334,6 @@ public class MainWindow extends javax.swing.JFrame
     {
         CloseableView cv = new CloseableView(dockable.getName());
         cv.setContentPane(dockable);
-        
         if (dockingPort.getDockables().isEmpty())
         {
             dockingPort.dock(cv);
@@ -313,10 +361,19 @@ public class MainWindow extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     // End of variables declaration//GEN-END:variables
  public SidePanel getSidePanel()
     {
         return sidePanel;
     }
+ 
+ public void revalidatePhoto(){
+      for (SideBarButton button : sidePanel.getButtonList()){
+          button.revalidate();
+     }
+      sidePanel.revalidate();
+ }
 }

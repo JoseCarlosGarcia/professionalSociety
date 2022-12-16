@@ -1,0 +1,24 @@
+Comunidad: 1
+Amanda Méndez ID: 02091868898 País: Mexico Profesión: Disenadora
+Brian Michel Morales ID: 02102768988 País: Australia Profesión: Ingeniero Automatico
+
+Comunidad: 2
+Amaya Delgado ID: 02111268898 País: Inglaterra Profesión: Desarrolladora de videojuegos
+Javier Marrero ID: 01040368898 País: Alemania Profesión: Disenador de Software
+José Carlos García Cruz ID: 01081268460 País: España Profesión: Analista de requisitos
+
+Comunidad: 3
+Leo Zayas ID: 04031529685 País: Brasil Profesión: Arquitecto
+Carlos Daniel Robaina Rivero ID: 01090466805 País: Sudáfrica Profesión: Licenciado en Matemática
+Ananda Morales ID: 02090566997 País: Rusia Profesión: Redactora de informes
+
+Comunidad: 4
+Barbara Teresa ID: 04031568898 País: Grecia Profesión: Psicologa
+Camilo Chamorro ID: 01080725688 País: Cuba Profesión: Probador de software
+
+Comunidad: 5
+Héctor Ángel Gómez Robaina ID: 01112568886 País: Colombia Profesión: Desarrollador en JavaScript
+Jordi Pinto Pedraza ID: 01110867763 País: Marruecos Profesión: Probador de software
+Gabriela Hernández Felipe ID: 02101267230 País: Costa Rica Profesión: Licenciada en Educación
+Marcos Rafael Arencibia Rodríguez ID: 01062366306 País: Cuba Profesión: Inflador de Software
+

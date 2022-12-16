@@ -16,20 +16,46 @@
  */
 package cu.edu.cujae.ed.snetwork.ui;
 
+import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.utils.FileManager;
+import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
+import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
+import static java.awt.image.ImageObserver.HEIGHT;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultTreeModel;
+
 /**
  *
  * @author Jose
  */
 public class Communities extends javax.swing.JDialog
 {
+    private ArrayList<ArrayList<Person>> communities;
+    private final FileManager fileManager;
 
     /**
      * Creates new form Communities
+     * @param parent
+     * @param modal
+     * @param communities
+     * @param fileManager
      */
-    public Communities(java.awt.Frame parent, boolean modal)
+    public Communities(java.awt.Frame parent, boolean modal, ArrayList<ArrayList<Person>> communities,
+                       FileManager fileManager)
     {
         super(parent, modal);
         initComponents();
+        this.fileManager = fileManager;
+        this.communities = communities;
+        DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
+        model.setRoot(TreeUtils.makeCommunities(communities));
+
+        revalidate();
     }
 
     /**
@@ -45,6 +71,7 @@ public class Communities extends javax.swing.JDialog
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Comunidades");
@@ -64,6 +91,18 @@ public class Communities extends javax.swing.JDialog
             }
         });
 
+        jButton2.setIcon(UIManager.getIcon("FileView.floppyDriveIcon"));
+        jButton2.setMaximumSize(new java.awt.Dimension(32, 32));
+        jButton2.setMinimumSize(new java.awt.Dimension(32, 32));
+        jButton2.setPreferredSize(new java.awt.Dimension(32, 32));
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -73,7 +112,9 @@ public class Communities extends javax.swing.JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 316, Short.MAX_VALUE)
+                        .addGap(0, 235, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -83,8 +124,10 @@ public class Communities extends javax.swing.JDialog
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -96,66 +139,23 @@ public class Communities extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[])
-    {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
+    {//GEN-HEADEREND:event_jButton2ActionPerformed
         try
         {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
-            {
-                if ("Nimbus".equals(info.getName()))
-                {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            SaveTXT.saveCommunities(communities, fileManager);
+            JOptionPane.showMessageDialog(this, "Se ha guardado con éxito el documento", "Completado", HEIGHT, null);
         }
-        catch (ClassNotFoundException ex)
+        catch (IOException ex)
         {
-            java.util.logging.Logger.getLogger(Communities.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(Communities.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch (InstantiationException ex)
-        {
-            java.util.logging.Logger.getLogger(Communities.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
-        {
-            java.util.logging.Logger.getLogger(Communities.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex)
-        {
-            java.util.logging.Logger.getLogger(Communities.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    }//GEN-LAST:event_jButton2ActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                Communities dialog = new Communities(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter()
-                {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e)
-                    {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables

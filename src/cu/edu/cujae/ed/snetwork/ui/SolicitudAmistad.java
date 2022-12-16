@@ -79,6 +79,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Solicitud de amistad");
         setResizable(false);
 
         jLabel1.setText("Foto");

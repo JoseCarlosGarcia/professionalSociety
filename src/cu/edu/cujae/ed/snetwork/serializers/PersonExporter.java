@@ -47,6 +47,11 @@ public class PersonExporter
     public File serialize() throws IOException
     {
         File file = new File(fm.getAppDirectory(), "people.txt");
+        if (file.exists() == false)
+        {
+            file.createNewFile();
+        }
+
         FileWriter flWriter = null;
         IOException exception = null;
 

@@ -219,7 +219,7 @@ public final class Person
 
     public boolean equals(Person p)
     {
-        return p.getCountry().equalsIgnoreCase(country) ? p.getID().equals(ID) : false;
+        return p.getID().equals(ID);
     }
 
     /**
@@ -246,6 +246,22 @@ public final class Person
     public Pair<Notification<Friendship>, Person> sendWorkLoadModification(int amountOfWork, Person p)
     {
         return new Pair<>(new Notification<>(NotificationType.WORKLOAD_MODIFICATION, "Desearia modificar la cantidad de trabajo que compartimos", new Friendship(this, amountOfWork), UUID.randomUUID()), p);
+    }
+
+    /**
+     * @return the photo
+     */
+    public Image getPhoto()
+    {
+        return photo;
+    }
+
+    /**
+     * @param photo the photo to set
+     */
+    public void setPhoto(Image photo)
+    {
+        this.photo = photo;
     }
 
 }

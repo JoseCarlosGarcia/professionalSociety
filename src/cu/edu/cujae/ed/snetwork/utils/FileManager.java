@@ -29,8 +29,11 @@ import javax.imageio.ImageIO;
  */
 public final class FileManager
 {
-    public static final String APP_DIRECTORY = "./snet/data";
-    
+    public static final String APP_DIRECTORY = "snet/data";
+    public static final String PPIC_NAME = "ppic.jpg";
+    public static final String PEOPLE_TXT = "people.txt";
+    public static final String ICON_DIRECTORY = "snet/data/icon.png";
+
     private final File appDirectory;
     private final File picsDirectory;
     private final Map<String, File> profilePics;
@@ -64,12 +67,28 @@ public final class FileManager
         profilePics.put(profileId, directory);
         return directory.mkdir();
     }
+
+    public boolean existsFile(String file)
+    {
+        return new File(appDirectory, file).exists();
+    }
+
+    public File getFile(String name)
+    {
+        return new File(appDirectory, name);
+    }
+
+    public File getProfileDir(String id)
+    {
+        return profilePics.get(id);
+    }
     
     public Image getPictureInProfile(String id, String photo) throws IOException
     {
         File image = new File(profilePics.get(id), photo);
         if (image.exists() == false)
-            throw new IOException("La foto buscada no existe en el sistema de archivos.");
+            throw new IOException("La foto buscada no existe en el sistema de archivos: " + image.getAbsolutePath().
+                toString());
         
         return ImageIO.read(image);
     }
@@ -89,5 +108,9 @@ public final class FileManager
     {
         return picsDirectory;
     }
-    
+
+    public File getGraphSerializationFile()
+    {
+        return new File(appDirectory, "database.db");
+    }
 }

@@ -64,6 +64,7 @@ public class CambiarContrasena extends javax.swing.JDialog
         jPasswordField1 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cambiar contraseña");
         setModal(true);
         setResizable(false);
 
@@ -196,6 +197,7 @@ public class CambiarContrasena extends javax.swing.JDialog
         if (p.equals(pasword) ){
             if (!p.equals(newPasword)){
                 person.setPassword(newPasword);
+                dispose();
             } else {
                 jLabelCI.setText("La contraseña nueva no puede ser igual a la anterior");
                 jLabelCI.setVisible(true);

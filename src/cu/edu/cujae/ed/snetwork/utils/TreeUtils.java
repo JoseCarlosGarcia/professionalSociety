@@ -21,6 +21,7 @@ import cu.edu.cujae.graphy.core.Node;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.TreeNode;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFrame;
@@ -57,7 +58,7 @@ public class TreeUtils
         return person;
     }
     
-    public static void makeCommunities(List<List<Person>> list)
+    public static DefaultMutableTreeNode makeCommunities(ArrayList<ArrayList<Person>> list)
     {
         int i = 1;
         DefaultMutableTreeNode communities = new DefaultMutableTreeNode("Comunidades");
@@ -75,5 +76,7 @@ public class TreeUtils
                 
             }
         }
+
+        return communities;
     }
 }

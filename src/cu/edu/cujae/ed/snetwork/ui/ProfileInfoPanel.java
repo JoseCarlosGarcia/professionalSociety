@@ -18,18 +18,34 @@ package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
+import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
+import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.logging.Level;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import static javax.swing.JComponent.TOOL_TIP_TEXT_KEY;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultTreeModel;
 import org.flexdock.docking.DockingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +56,16 @@ import org.slf4j.LoggerFactory;
  */
 public class ProfileInfoPanel extends JPanel
 {
+
     private SidePanel sp;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileInfoPanel.class);
-    
+
     private Person person;
     private MainWindow mw;
+
     /**
      * Creates new form ProfileInfoPanel
+     *
      * @param p
      */
     public ProfileInfoPanel(Person p, MainWindow mw)
@@ -55,21 +74,48 @@ public class ProfileInfoPanel extends JPanel
         this.sp = null;
         this.mw = mw;
         this.person = p;
+
         nameText.setText(p.getName());
         apellidosText.setText(p.getLastName());
         paisText.setText(p.getCountry());
         profesionTextField.setText(p.getProfession());
+
+        if (p.getPhoto() != null)
+        {
+            Image pic = p.getPhoto().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+            jPicLabel.setIcon(new ImageIcon(pic));
+        }
+
+        GraphIterator<Person> gI = ApplicationController.getInstance().getsocialNetWork().
+            iterator(ApplicationController.getInstance().getLabelofPerson(p));
+        gI.next(ApplicationController.getInstance().getLabelofPerson(p));
+
+        Tree<Person> treeC = ApplicationController.getInstance().getConexionOfAPerson(p);
+
+        Tree<Person> treeA = ApplicationController.getInstance().getCollaborationExpansionTree(gI);
+
+        DefaultTreeModel modelC = (DefaultTreeModel) jTreeC.getModel();
+        DefaultTreeModel modelA = (DefaultTreeModel) jTreeA.getModel();
+
+        modelC.setRoot(TreeUtils.makeTree(treeC));
+        modelA.setRoot(TreeUtils.makeTree(treeA));
+
         JMenuItem m1 = new JMenuItem("Modificar Perfil");
+        JMenuItem m8 = new JMenuItem("Cambiar contraseña");
         JMenuItem m2 = new JMenuItem("Eliminar Perfil");
         JMenuItem m3 = new JMenuItem("Cerrar");
         JMenuItem m4 = new JMenuItem("Enviar solicitud");
-        JMenuItem m5 = new JMenuItem("Modificar cantidad de trabajos");
+        JMenuItem m6 = new JMenuItem("Cambiar foto del perfil");
+        JMenuItem m7 = new JMenuItem("Amigos");
 
         jPopupMenu1.add(m1);
+        jPopupMenu1.add(m8);
+        jPopupMenu1.add(m6);
+        jPopupMenu1.add(m7);
+        jPopupMenu1.add(m4);
         jPopupMenu1.add(m2);
         jPopupMenu1.add(m3);
-        jPopupMenu1.add(m4);
-        jPopupMenu1.add(m5);
+
         m1.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -89,9 +135,9 @@ public class ProfileInfoPanel extends JPanel
                     showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", TOOL_TIP_TEXT_KEY,
                                       JOptionPane.YES_NO_OPTION) == 0)
                 {
-                ApplicationController.getInstance().deletePerson(person);
-                mw.getCv().getViewport().undock(mw.getCv());
-                mw.setIsOpened(false);
+                    ApplicationController.getInstance().deletePerson(person);
+                    mw.getCv().getViewport().undock(mw.getCv());
+                    mw.setIsOpened(false);
                     mw.getSidePanel().deletePerson(person);
                 }
 
@@ -102,7 +148,7 @@ public class ProfileInfoPanel extends JPanel
         {
             @Override
             public void actionPerformed(ActionEvent e)
-            {                
+            {
                 mw.setIsOpened(false);
                 if (mw.getSa() != null && mw.isIsOSE())
                 {
@@ -128,7 +174,7 @@ public class ProfileInfoPanel extends JPanel
                     getsocialNetWork().breadthFirstSearchIterator(true);
                 int label = ApplicationController.getInstance().getLabelofPerson(person);
                 while (gi.hasNext())
-                {                    
+                {
                     Person p = gi.next();
                     System.out.println(p.getName());
                     if (!p.equals(person) && !gi.isAdjacent(label))
@@ -139,13 +185,16 @@ public class ProfileInfoPanel extends JPanel
                 sp.setVisible(true);
                 mw.setIsOSE(true);
                 mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
-                sp.addSelectionListener((var per) ->                {
+                sp.addSelectionListener((var per) -> 
+                {
                     EnviarSolicitudAmistad es = new EnviarSolicitudAmistad(per, person, mw);
                     es.setVisible(true);
                 });
             }
         });
 
+        /*JMenuItem m5 = new JMenuItem("Modificar cantidad de trabajos");
+        jPopupMenu1.add(m5);
         m5.addActionListener(new ActionListener()
         {
             @Override
@@ -160,10 +209,10 @@ public class ProfileInfoPanel extends JPanel
                 System.out.println("Si");
                 GraphIterator<Person> gi = (GraphIterator<Person>) ApplicationController.getInstance().
                     getsocialNetWork().iterator(ApplicationController.getInstance().getLabelofPerson(person));
-                    gi.next(ApplicationController.getInstance().getLabelofPerson(person));
-                    for (Integer i : gi.getAllAdjacentVertices())
-                    {
-                        sp.addPerson(ApplicationController.getInstance().getPerson(i));
+                gi.next(ApplicationController.getInstance().getLabelofPerson(person));
+                for (Integer i : gi.getAllAdjacentVertices())
+                {
+                    sp.addPerson(ApplicationController.getInstance().getPerson(i));
                 }
                 sp.setVisible(true);
                 mw.setIsOSE(true);
@@ -174,11 +223,87 @@ public class ProfileInfoPanel extends JPanel
                     ec.setVisible(true);
                 });
             }
+        });*/
+
+        m6.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                JFileChooser chooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Fotos", "jpg");
+                chooser.setFileFilter(filter);
+                int returnVal = chooser.showOpenDialog(null);
+                if (returnVal == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {
+                        File selectedPicture = chooser.getSelectedFile();
+                        String fileName = FileManager.PPIC_NAME;
+                        Files.delete(Paths.get(mw.getFileManager().getProfileDir(person.getID()).getAbsolutePath(),
+                                               fileName));
+
+                        Path path = Paths.get(mw.getFileManager().getProfileDir(person.getID()).getAbsolutePath(),
+                                              fileName);
+                        Files.copy(selectedPicture.toPath(), path);
+
+                        FileManager fm = mw.getFileManager();
+                        person.setPhoto(fm.getPictureInProfile(person.getID(), fileName));
+
+                        ImageIcon icon = new ImageIcon(selectedPicture.getAbsolutePath());
+                        Image img = icon.getImage();
+                        Image scaled = img.getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+
+                        jPicLabel.setIcon(new ImageIcon(scaled));
+                        mw.revalidatePhoto();
+                    }
+                    catch (IOException ex)
+                    {
+                        java.util.logging.Logger.getLogger(ProfileInfoPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+
+        m7.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (mw.isIsOSE())
+                {
+                    mw.getSa().getViewport().undock(mw.getSa());
+                    mw.setIsOSE(false);
+                }
+                SidePanel sp = new SidePanel();
+                System.out.println("Si");
+                GraphIterator<Person> gi = ApplicationController.getInstance().
+                    getsocialNetWork().iterator(ApplicationController.getInstance().getLabelofPerson(person));
+                gi.next(ApplicationController.getInstance().getLabelofPerson(person));
+                for (Integer i : gi.getAllAdjacentVertices())
+                {
+                    sp.addFriend(ApplicationController.getInstance().getPerson(i), person, mw);
+                }
+                sp.setVisible(true);
+                mw.setIsOSE(true);
+                mw.setSa(mw.dockSP(sp, DockingConstants.CENTER_REGION, 1f));
+            }
+        });
+
+        m8.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                CambiarContrasena cc = new CambiarContrasena(null, true, person);
+                cc.setVisible(true);
+            }
         });
 
         LinkedList<Notification<?>> listN = (LinkedList<Notification<?>>) ApplicationController.getInstance().
             getPendantNotifications().get(person);
-        for (Notification<?> n : listN)
+        /*for (Notification<?> n : listN)
         {
             JMenuItem j = new JMenuItem(n.getType().toString());
             j.addActionListener(new AbstractAction()
@@ -216,14 +341,13 @@ public class ProfileInfoPanel extends JPanel
                 }
             });
             jPopupMenu2.add(j);
-        }
+        }*/
 
     }
 
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
+     * content of this method is always regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -249,12 +373,12 @@ public class ProfileInfoPanel extends JPanel
         profesionTextField = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        jTreeA = new javax.swing.JTree();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTree2 = new javax.swing.JTree();
+        jTreeC = new javax.swing.JTree();
         jPanel4 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jPicLabel = new javax.swing.JLabel();
 
         setName("Perfil"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
@@ -262,7 +386,11 @@ public class ProfileInfoPanel extends JPanel
         jPanel1.setMaximumSize(new java.awt.Dimension(32767, 16));
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        notificationButton.setText("Notificaciones");
+        notificationButton.setIcon(UIManager.getIcon("Tree.expandedIcon")
+        );
+        notificationButton.setMaximumSize(new java.awt.Dimension(22, 22));
+        notificationButton.setMinimumSize(new java.awt.Dimension(22, 22));
+        notificationButton.setPreferredSize(new java.awt.Dimension(22, 22));
         notificationButton.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -290,6 +418,14 @@ public class ProfileInfoPanel extends JPanel
         jPanel3.setMaximumSize(new java.awt.Dimension(32767, 256));
         jPanel3.setMinimumSize(new java.awt.Dimension(10, 256));
         jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                jTabbedPane1MouseClicked(evt);
+            }
+        });
 
         jLabel2.setText("Nombre:");
 
@@ -385,7 +521,7 @@ public class ProfileInfoPanel extends JPanel
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(profesionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Información General", jPanel5);
@@ -393,8 +529,10 @@ public class ProfileInfoPanel extends JPanel
         jPanel6.setLayout(new java.awt.BorderLayout());
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane1.setViewportView(jTree1);
+        jTreeA.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeA.setRootVisible(false);
+        jTreeA.setShowsRootHandles(true);
+        jScrollPane1.setViewportView(jTreeA);
 
         jPanel6.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -403,8 +541,10 @@ public class ProfileInfoPanel extends JPanel
         jPanel7.setLayout(new java.awt.BorderLayout());
 
         treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        jTree2.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane2.setViewportView(jTree2);
+        jTreeC.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeC.setRootVisible(false);
+        jTreeC.setShowsRootHandles(true);
+        jScrollPane2.setViewportView(jTreeC);
 
         jPanel7.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -414,12 +554,14 @@ public class ProfileInfoPanel extends JPanel
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        jPanel4.setPreferredSize(new java.awt.Dimension(32767, 100));
+        jPanel4.setPreferredSize(new java.awt.Dimension(32767, 128));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Foto");
-        jPanel4.add(jLabel1, java.awt.BorderLayout.CENTER);
+        jPicLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPicLabel.setMaximumSize(new java.awt.Dimension(128, 128));
+        jPicLabel.setMinimumSize(new java.awt.Dimension(128, 128));
+        jPicLabel.setPreferredSize(new java.awt.Dimension(128, 128));
+        jPanel4.add(jPicLabel, java.awt.BorderLayout.CENTER);
 
         jPanel2.add(jPanel4, java.awt.BorderLayout.PAGE_START);
 
@@ -429,9 +571,9 @@ public class ProfileInfoPanel extends JPanel
     private void optionsMenuButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_optionsMenuButtonActionPerformed
     {//GEN-HEADEREND:event_optionsMenuButtonActionPerformed
         if (mw.isIsOSE())
-                {
-                    mw.getSa().getViewport().undock(mw.getSa());
-                    mw.setIsOSE(false);
+        {
+            mw.getSa().getViewport().undock(mw.getSa());
+            mw.setIsOSE(false);
         }
         jPopupMenu1.show(optionsMenuButton, optionsMenuButton.getHorizontalAlignment(), optionsMenuButton.
                          getVerticalAlignment());
@@ -440,9 +582,9 @@ public class ProfileInfoPanel extends JPanel
     private void notificationButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_notificationButtonActionPerformed
     {//GEN-HEADEREND:event_notificationButtonActionPerformed
         if (mw.isIsOSE())
-                {
-                    mw.getSa().getViewport().undock(mw.getSa());
-                    mw.setIsOSE(false);
+        {
+            mw.getSa().getViewport().undock(mw.getSa());
+            mw.setIsOSE(false);
         }
         jPopupMenu2.show(notificationButton, notificationButton.getHorizontalAlignment(), notificationButton.
                          getVerticalAlignment());
@@ -450,7 +592,7 @@ public class ProfileInfoPanel extends JPanel
 
     private void nameTextActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_nameTextActionPerformed
     {//GEN-HEADEREND:event_nameTextActionPerformed
-        
+
     }//GEN-LAST:event_nameTextActionPerformed
 
     private void nameTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_nameTextFocusLost
@@ -473,10 +615,14 @@ public class ProfileInfoPanel extends JPanel
         person.setProfession(profesionTextField.getText());
     }//GEN-LAST:event_profesionTextFieldFocusLost
 
+    private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jTabbedPane1MouseClicked
+    {//GEN-HEADEREND:event_jTabbedPane1MouseClicked
+        jTreeA.revalidate();
+    }//GEN-LAST:event_jTabbedPane1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosText;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -488,13 +634,14 @@ public class ProfileInfoPanel extends JPanel
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JLabel jPicLabel;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JPopupMenu jPopupMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTree jTree1;
-    private javax.swing.JTree jTree2;
+    private javax.swing.JTree jTreeA;
+    private javax.swing.JTree jTreeC;
     private javax.swing.JTextField nameText;
     private javax.swing.JToggleButton notificationButton;
     private javax.swing.JButton optionsMenuButton;

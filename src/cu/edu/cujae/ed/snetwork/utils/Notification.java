@@ -21,16 +21,15 @@ import java.util.UUID;
 /**
  *
  * @author Jose
- * @param <T>
  */
-public final class Notification<T>
+public final class Notification
 {
     private final NotificationType type;
     private final UUID uuid;
     private final String message;
-    private final T data;
+    private final Object data;
 
-    public Notification(NotificationType type, String message, T data, UUID uuid)
+    public Notification(NotificationType type, String message, Object data, UUID uuid)
     {
         this.type = type;
         this.message = message;
@@ -57,9 +56,15 @@ public final class Notification<T>
     /**
      * @return the data
      */
-    public T getData()
+    public Object getRawData()
     {
         return data;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getData()
+    {
+        return (T) data;
     }
 
     /**

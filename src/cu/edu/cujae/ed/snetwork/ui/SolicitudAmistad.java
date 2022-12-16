@@ -22,7 +22,9 @@ import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
+import java.awt.Image;
 import java.util.UUID;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -33,18 +35,24 @@ public class SolicitudAmistad extends javax.swing.JFrame
 {
     private Friendship friendship;
     private Person solicitada;
-    private Notification<Friendship> n;
+    private Notification n;
     /**
      * Creates new form SolicitudAmistad
      * @param n
      * @param solicitada
      */
-    public SolicitudAmistad(Notification<Friendship> n, Person solicitada)
+    public SolicitudAmistad(Notification n, Person solicitada)
     {
         initComponents();
         this.friendship = n.getData();
         this.solicitada = solicitada;
         this.n = n;
+        if (((Friendship) n.getData()).getPerson().getPhoto() != null)
+        {
+            Image pic = ((Friendship) n.getData()).getPerson().getPhoto().
+                getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+            jLabelPhoto.setIcon(new ImageIcon(pic));
+        }
         jLabelName.setText(friendship.getPerson().getName());
         jLabelApellidos.setText(friendship.getPerson().getLastName());
         jLabelPais.setText(friendship.getPerson().getCountry());
@@ -63,7 +71,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
     {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelPhoto = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -82,7 +90,9 @@ public class SolicitudAmistad extends javax.swing.JFrame
         setTitle("Solicitud de amistad");
         setResizable(false);
 
-        jLabel1.setText("Foto");
+        jPanel1.setMaximumSize(new java.awt.Dimension(128, 128));
+        jPanel1.setMinimumSize(new java.awt.Dimension(128, 128));
+        jPanel1.setPreferredSize(new java.awt.Dimension(128, 128));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -90,14 +100,14 @@ public class SolicitudAmistad extends javax.swing.JFrame
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addComponent(jLabel1)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addComponent(jLabelPhoto)
+                .addContainerGap(91, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(55, 55, 55)
-                .addComponent(jLabel1)
+                .addComponent(jLabelPhoto)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -155,7 +165,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabelTrabajos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 91, Short.MAX_VALUE)
+                                .addGap(0, 109, Short.MAX_VALUE)
                                 .addComponent(jButton2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1)))
@@ -201,9 +211,9 @@ public class SolicitudAmistad extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -212,7 +222,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -228,8 +238,8 @@ public class SolicitudAmistad extends javax.swing.JFrame
                System.out.println("Siiiiii entrooooo");
                ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(
-                   new Notification<>(NotificationType.CONFIRMATION, null, solicitada.getName() + " " + solicitada.
-                                      getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
+                   new Notification(NotificationType.CONFIRMATION, " ", solicitada.getName() + " " + solicitada.
+                                    getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
                JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().
                                              getLastName() + " y usted ahora son amigos", "Amistad",
                                              JOptionPane.INFORMATION_MESSAGE);
@@ -244,7 +254,10 @@ public class SolicitudAmistad extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
-        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.NEGATION,null, solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado tu solicitud de amistad",UUID.randomUUID() ));
+        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification(
+            NotificationType.NEGATION, " ",
+            solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado tu solicitud de amistad", UUID.
+            randomUUID()));
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -252,7 +265,6 @@ public class SolicitudAmistad extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -261,6 +273,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
     private javax.swing.JLabel jLabelApellidos;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelPais;
+    private javax.swing.JLabel jLabelPhoto;
     private javax.swing.JLabel jLabelProfesion;
     private javax.swing.JLabel jLabelTrabajos;
     private javax.swing.JPanel jPanel1;

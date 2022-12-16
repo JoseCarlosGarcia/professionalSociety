@@ -19,9 +19,7 @@ package cu.edu.cujae.ed.snetwork.ui;
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
-import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
-import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
@@ -33,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import javax.swing.AbstractAction;
@@ -42,7 +41,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
@@ -54,6 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jose
  */
+@SuppressWarnings("serial")
 public class ProfileInfoPanel extends JPanel
 {
 
@@ -61,7 +60,7 @@ public class ProfileInfoPanel extends JPanel
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileInfoPanel.class);
 
     private Person person;
-    private MainWindow mw;
+    private final MainWindow mw;
 
     /**
      * Creates new form ProfileInfoPanel
@@ -116,31 +115,22 @@ public class ProfileInfoPanel extends JPanel
         jPopupMenu1.add(m2);
         jPopupMenu1.add(m3);
 
-        m1.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                LOGGER.info("Nombre: {}", person.getName());
-                apellidosText.setEditable(true);
-                nameText.setEditable(true);
-                paisText.setEditable(true);
-                profesionTextField.setEditable(true);
-            }
+        m1.addActionListener((ActionEvent e) ->        {
+            LOGGER.info("Nombre: {}", person.getName());
+            apellidosText.setEditable(true);
+            nameText.setEditable(true);
+            paisText.setEditable(true);
+            profesionTextField.setEditable(true);
         });
-        m2.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
+        m2.addActionListener((ActionEvent e) ->        {
+            if (JOptionPane.
+                showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", TOOL_TIP_TEXT_KEY,
+                                  JOptionPane.YES_NO_OPTION) == 0)
             {
-                if (JOptionPane.
-                    showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", TOOL_TIP_TEXT_KEY,
-                                      JOptionPane.YES_NO_OPTION) == 0)
-                {
-                    ApplicationController.getInstance().deletePerson(person);
-                    mw.getCv().getViewport().undock(mw.getCv());
-                    mw.setIsOpened(false);
-                    mw.getSidePanel().deletePerson(person);
-                }
-
+                ApplicationController.getInstance().deletePerson(person);
+                mw.getCv().getViewport().undock(mw.getCv());
+                mw.setIsOpened(false);
+                mw.getSidePanel().deletePerson(person);
             }
         });
 
@@ -301,9 +291,9 @@ public class ProfileInfoPanel extends JPanel
             }
         });
 
-        LinkedList<Notification<?>> listN = (LinkedList<Notification<?>>) ApplicationController.getInstance().
+        LinkedList<Notification> listN = (LinkedList<Notification>) ApplicationController.getInstance().
             getPendantNotifications().get(person);
-        /*for (Notification<?> n : listN)
+        for (Notification n : listN)
         {
             JMenuItem j = new JMenuItem(n.getType().toString());
             j.addActionListener(new AbstractAction()
@@ -311,37 +301,34 @@ public class ProfileInfoPanel extends JPanel
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    if (n.getType().equals(NotificationType.FRINDSHIP_REQUEST))
+                    switch (n.getType())
                     {
-                        @SuppressWarnings("unchecked")
-                        SolicitudAmistad sa = new SolicitudAmistad((Notification<Friendship>) n, person);
-                        sa.setVisible(true);
-                        jPopupMenu2.remove(j);
-                    }
-                    else if (n.getType().equals(NotificationType.WORKLOAD_MODIFICATION))
-                    {
-                        @SuppressWarnings("unchecked")
-                        ModificarCantidadTrabajo mt = new ModificarCantidadTrabajo((Notification<Friendship>) n, person);
-                        mt.setVisible(true);
-                        jPopupMenu2.remove(j);
-                    }
-                    else if (n.getType().equals(NotificationType.CONFIRMATION))
-                    {
-                        JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",
-                                                      JOptionPane.INFORMATION_MESSAGE);
-                        jPopupMenu2.remove(j);
-
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
-                                                      JOptionPane.INFORMATION_MESSAGE);
-                        jPopupMenu2.remove(j);
+                        case FRINDSHIP_REQUEST:
+                            @SuppressWarnings("unchecked") SolicitudAmistad sa = new SolicitudAmistad(n, person);
+                            sa.setVisible(true);
+                            jPopupMenu2.remove(j);
+                            break;
+                        case WORKLOAD_MODIFICATION:
+                            @SuppressWarnings("unchecked") ModificarCantidadTrabajo mt = new ModificarCantidadTrabajo(n,
+                                                                                                                      person);
+                            mt.setVisible(true);
+                            jPopupMenu2.remove(j);
+                            break;
+                        case CONFIRMATION:
+                            JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",
+                                                          JOptionPane.INFORMATION_MESSAGE);
+                            jPopupMenu2.remove(j);
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
+                                                          JOptionPane.INFORMATION_MESSAGE);
+                            jPopupMenu2.remove(j);
+                            break;
                     }
                 }
             });
             jPopupMenu2.add(j);
-        }*/
+        }
 
     }
 

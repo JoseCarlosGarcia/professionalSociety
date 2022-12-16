@@ -4,9 +4,11 @@
  */
 package cu.edu.cujae.ed.snetwork.logic;
 
+import cu.edu.cujae.ed.snetwork.serializers.NotificationSerializer;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
+import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.algorithms.FirstLevelCommunities;
 import cu.edu.cujae.graphy.algorithms.IsolatedVertices;
 import cu.edu.cujae.graphy.core.Edge;
@@ -58,9 +60,14 @@ public class ApplicationController
     }
     private WeightedGraph<Person> socialNetWork;
     private int labelCounter;
-    private final Map<Person, List<Notification<?>>> pendantNotifications;
+    private final Map<Person, List<Notification>> pendantNotifications;
     private FileManager fileManager;
-    private Map<String, Person> originalPersons;
+    private final Map<String, Person> originalPersons;
+
+    public Map<String, Person> getOriginalPersons()
+    {
+        return originalPersons;
+    }
 
     private ApplicationController()
     {
@@ -129,7 +136,29 @@ public class ApplicationController
         }
     }
 
-    public Map<Person, List<Notification<?>>> getPendantNotifications()
+    public void saveNotifications() throws IOException
+    {
+        for (Map.Entry<Person, List<Notification>> entry : pendantNotifications.entrySet())
+        {
+            NotificationSerializer ns = new NotificationSerializer(fileManager, entry.getKey());
+            ns.serialize(entry.getValue());
+        }
+    }
+
+    public void loadNotification(List<Person> list) throws FileNotFoundException
+    {
+        for (Person p : list)
+        {
+            NotificationSerializer ns = new NotificationSerializer(fileManager, p);
+            LinkedList<Notification> notificationsList = new LinkedList<>();
+            notificationsList.addAll(ns.deserializar("friendship"));
+            notificationsList.addAll(ns.deserializar("string"));
+            pendantNotifications.put(p, notificationsList);
+
+        }
+    }
+
+    public Map<Person, List<Notification>> getPendantNotifications()
     {
         return pendantNotifications;
     }
@@ -177,7 +206,7 @@ public class ApplicationController
     }
 
     //Añadir notificación a la cola de notificaciones de una persona
-    public void addNotification(Pair<Notification<Friendship>, Person> p)
+    public void addNotification(Pair<Notification, Person> p)
     {
         if (p.getFirst() != null && p.getLast() != null)
         {

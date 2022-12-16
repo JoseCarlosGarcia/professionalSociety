@@ -18,6 +18,7 @@ package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.ed.snetwork.serializers.PersonExporter;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
 import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
@@ -165,6 +166,13 @@ public class MainWindow extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SocialNetWork");
+        addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            public void windowClosing(java.awt.event.WindowEvent evt)
+            {
+                formWindowClosing(evt);
+            }
+        });
 
         dockingPort.setPreferredSize(new java.awt.Dimension(800, 600));
         getContentPane().add(dockingPort, java.awt.BorderLayout.CENTER);
@@ -313,6 +321,29 @@ public class MainWindow extends javax.swing.JFrame
         InsertarPersona ip = new InsertarPersona(this);
         ip.setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+    {//GEN-HEADEREND:event_formWindowClosing
+        try
+        {
+            ApplicationController.getInstance().saveGraph();
+            ArrayList<Person> people = ApplicationController.getInstance().getPersons();
+                        for (Person p : people)
+                        {
+                            File ppicDir = new File(fileManager.getPicsDirectory(), p.getID());
+                            ppicDir.mkdir();
+                        }
+
+            PersonExporter exp = new PersonExporter(people, fileManager);
+            exp.serialize();
+            ApplicationController.getInstance().saveNotifications();
+        }
+        catch (IOException ex)
+        {
+            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_formWindowClosing
     
     public final CloseableView dockSP(JComponent dockable, String region, float size){
         CloseableView cv = new CloseableView(dockable.getName());

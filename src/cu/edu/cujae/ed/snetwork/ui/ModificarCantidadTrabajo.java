@@ -22,7 +22,9 @@ import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
+import java.awt.Image;
 import java.util.UUID;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -33,14 +35,14 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
 {
     private Friendship friendship;
     private Person solicitada;
-    private Notification<Friendship> n;
+    private Notification n;
 
     /**
      * Creates new form ModificarCantidadTrabajo
      * @param n
      * @param solicitada
      */
-    public ModificarCantidadTrabajo(Notification<Friendship> n, Person solicitada)
+    public ModificarCantidadTrabajo(Notification n, Person solicitada)
     {
         initComponents();
         this.friendship = n.getData();
@@ -52,6 +54,12 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
         jLabelProfesion.setText(friendship.getPerson().getProfession());
         jLabelTrabajos.setText(String.valueOf(ApplicationController.getInstance().getAmountOfWork(friendship.getPerson(), solicitada)));
         jLabelTrabajosNuevos.setText(String.valueOf(friendship.getAmountOfWork()));
+        if (((Friendship) n.getData()).getPerson().getPhoto() != null)
+        {
+            Image pic = ((Friendship) n.getData()).getPerson().getPhoto().
+                getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+            jLabelPhoto.setIcon(new ImageIcon(pic));
+        }
     }
 
     /**
@@ -65,7 +73,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelPhoto = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -86,22 +94,24 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
         setTitle("Modificar cantidad de trabajo");
         setResizable(false);
 
-        jLabel1.setText("Foto");
+        jLabelPhoto.setMaximumSize(new java.awt.Dimension(128, 128));
+        jLabelPhoto.setMinimumSize(new java.awt.Dimension(128, 128));
+        jLabelPhoto.setPreferredSize(new java.awt.Dimension(128, 128));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(jLabel1)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabelPhoto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(jLabel1)
+                .addContainerGap()
+                .addComponent(jLabelPhoto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -216,15 +226,17 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -241,9 +253,8 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
                 ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
                 JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().getLastName() + " y usted ahora comparten " + friendship.getAmountOfWork() + " de trabajo" , "Nueva cantidad de trabajos", JOptionPane.INFORMATION_MESSAGE);
                 ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(
-                    new Notification<>(NotificationType.CONFIRMATION, null, solicitada.getName() + " " + solicitada.
-                                       getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten",
-                                       UUID.randomUUID()));
+                    new Notification(NotificationType.CONFIRMATION, " ", solicitada.getName() + " " + solicitada.
+                                     getLastName() + " ha aceptado modificar la cantidad de trabajos que comparten",                                       UUID.randomUUID()));
                 dispose();
             }
         } catch(IllegalArgumentException e)
@@ -257,14 +268,16 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
-        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification<>(NotificationType.NEGATION,null, solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten",UUID.randomUUID()));
+        ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification(
+            NotificationType.NEGATION, null,
+            solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten",
+            UUID.randomUUID()));
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -274,6 +287,7 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     private javax.swing.JLabel jLabelApellidos;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelPais;
+    private javax.swing.JLabel jLabelPhoto;
     private javax.swing.JLabel jLabelProfesion;
     private javax.swing.JLabel jLabelTrabajos;
     private javax.swing.JLabel jLabelTrabajosNuevos;

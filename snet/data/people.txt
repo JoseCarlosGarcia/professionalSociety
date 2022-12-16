@@ -3,18 +3,18 @@ José Carlos,García Cruz,01081268460,España,Analista de requisitos,0102
 Javier,Marrero,01040368898,Alemania,Disenador de Software,0208
 Barbara,Teresa,04031568898,Grecia,Psicologa,0503
 Amanda,Méndez,02091868898,Mexico,Disenadora,0206
-Ananda,Morales,02090566997,Rusia,Redactora de informes,0203
-Alejandro,Bernal Roca,01081167363,Angola,Licenciado en Física,7363
 Amaya,Delgado,02111268898,Inglaterra,Desarrolladora de videojuegos,0209
+Alejandro,Bernal Roca,01081167363,Angola,Licenciado en Física,7363
+Leo,Zayas,04031529685,Brasil,Arquitecto,0213
+Ananda,Morales,02090566997,Rusia,Redactora de informes,0203
 Camilo,Chamorro,01080725688,Cuba,Probador de software,0205
 Carlos Daniel,Robaina Rivero,01090466805,Sudáfrica,Licenciado en Matemática,6805
 Amalia,Hernández Echeverria,02101668575,España,Licenciada en química,8575
-Leo,Zayas,04031529685,Brasil,Arquitecto,0213
 Marcos Rafael,Arencibia Rodríguez,01062366306,Cuba,Inflador de Software,6306
-César,Fernández García,01122666547,Venezuela,Desarrollador,6547
-David,García Francecsh,01081767228,Brasil,Ingeniero Químico,7228
 Héctor Ángel,Gómez Robaina,01112568886,Colombia,Desarrollador en JavaScript,8886
-Gabriela,Hernández Felipe,02101267230,Costa Rica,Licenciada en Educación,7230
 Melissa,Suárez Urquiza,02032267050,Argentina,Licenciada en Biología,7050
 Jordi,Pinto Pedraza,01110867763,Marruecos,Probador de software,7763
+Gabriela,Hernández Felipe,02101267230,Costa Rica,Licenciada en Educación,7230
+César,Fernández García,01122666547,Venezuela,Desarrollador,6547
+David,García Francecsh,01081767228,Brasil,Ingeniero Químico,7228
 Verónica,Rigual Cabezas,02022066976,Egipto,Ingeniera Civil,6976

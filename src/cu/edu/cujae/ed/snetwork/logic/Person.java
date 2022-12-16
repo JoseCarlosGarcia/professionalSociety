@@ -230,9 +230,10 @@ public final class Person
      * contiene la persona solicitante y la cantidad de trabajo y Person es la
      * solicitada
      */
-    public Pair<Notification<Friendship>, Person> sendFriendRequest(int amountOfWork, Person p)
+    public Pair<Notification, Person> sendFriendRequest(int amountOfWork, Person p)
     {
-        return new Pair<>(new Notification<>(NotificationType.FRINDSHIP_REQUEST, "Desearía trabajar con usted", new Friendship(this, amountOfWork), UUID.randomUUID()), p);
+        return new Pair<>(new Notification(NotificationType.FRINDSHIP_REQUEST, "Desearía trabajar con usted",
+                                           new Friendship(this, amountOfWork), UUID.randomUUID()), p);
     }
 
     /**
@@ -243,9 +244,11 @@ public final class Person
      * contiene la persona solicitante y la cantidad de trabajo y Person es la
      * solicitada
      */
-    public Pair<Notification<Friendship>, Person> sendWorkLoadModification(int amountOfWork, Person p)
+    public Pair<Notification, Person> sendWorkLoadModification(int amountOfWork, Person p)
     {
-        return new Pair<>(new Notification<>(NotificationType.WORKLOAD_MODIFICATION, "Desearia modificar la cantidad de trabajo que compartimos", new Friendship(this, amountOfWork), UUID.randomUUID()), p);
+        return new Pair<>(new Notification(NotificationType.WORKLOAD_MODIFICATION,
+                                           "Desearia modificar la cantidad de trabajo que compartimos", new Friendship(
+                                               this, amountOfWork), UUID.randomUUID()), p);
     }
 
     /**

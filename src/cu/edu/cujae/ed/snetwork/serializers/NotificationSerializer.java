@@ -16,8 +16,11 @@
  */
 package cu.edu.cujae.ed.snetwork.serializers;
 
+import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
+import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.logic.PersonBuilder;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
+import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import java.io.BufferedWriter;
@@ -26,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -33,27 +37,30 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  *
  * @author Amanda Méndez
+ * @param <T>
  */
-public class NotificationSerializer<T>
+public class NotificationSerializer
 {
+
     private final Logger logger;
     private final FileManager fm;
-    
-    public NotificationSerializer(FileManager fm)
+    private final Person person;
+
+    public NotificationSerializer(FileManager fm, Person p)
     {
         this.logger = LoggerFactory.getLogger(NotificationSerializer.class);
         this.fm = fm;
+        this.person = p;
     }
-    
-    public File serialize(List<Notification<? extends T>> list) throws IOException
+
+    public File serialize(List<Notification> list) throws IOException
     {
         String typename;
-        
-         if(!list.isEmpty())
+
+        if (!list.isEmpty())
         {
             typename = list.get(0).getData().getClass().getSimpleName().toLowerCase();
         }
@@ -61,8 +68,8 @@ public class NotificationSerializer<T>
         {
             typename = "empty";
         }
-        
-        File file = new File(fm.getAppDirectory(), "notifications-" + typename  + ".json");
+
+        File file = new File(fm.getProfileDir(person.getID()), "notifications-" + typename + ".json");
         FileWriter flWriter = null;
         IOException exception = null;
 
@@ -72,27 +79,28 @@ public class NotificationSerializer<T>
 
             BufferedWriter bfWriter = new BufferedWriter(flWriter);
 
-            for (Notification<? extends T> n : list)
+            for (Notification n : list)
             {
                 JSONObject object = new JSONObject(n);
                 object.write(bfWriter);
             }
             bfWriter.close();
-            
-        } catch(IOException e)
+
+        }
+        catch (IOException e)
         {
             logger.error("error en la escritura: ", e);
             exception = e;
         }
-        finally 
+        finally
         {
-            if(flWriter != null)
+            if (flWriter != null)
             {
-                try 
+                try
                 {
                     flWriter.close();
                 }
-                catch(IOException e)
+                catch (IOException e)
                 {
                     logger.error("error al cerrar el writer.", e);
                     exception = e;
@@ -100,44 +108,65 @@ public class NotificationSerializer<T>
             }
         }
         if (exception != null)
+        {
             throw exception;
-        
+        }
+
         return file;
     }
-    
-    public List<Notification<? extends T>> deserializar(File file) throws FileNotFoundException
+
+    public List<Notification> deserializar(String filename) throws FileNotFoundException
     {
-        List<Notification<? extends T>> list = new ArrayList<>();
+        List<Notification> list = new ArrayList<>();
         FileNotFoundException exception = null;
-        
+
         try
         {
-            Scanner scanner = new Scanner(file);
-            
-            while(scanner.hasNextLine())
+            File file = new File(fm.getProfileDir(person.getID()), "notifications-" + filename + ".json");
+            if (file.exists())
             {
-                String line = scanner.nextLine();
-                JSONObject json = new JSONObject(line);
-                
-                NotificationType nt = NotificationType.valueOf(json.getString(
+                Scanner scanner = new Scanner(file);
+
+                while (scanner.hasNextLine())
+                {
+                    String line = scanner.nextLine();
+                    JSONObject json = new JSONObject(line);
+
+                    NotificationType nt = NotificationType.valueOf(json.getString(
                         "type"));
-                UUID uuid = UUID.fromString(json.getString("uuid"));
-                String message = json.getString("message");
-                T data = (T) json.get("data");
-                               
-                list.add(new Notification(nt,message,data,uuid));
+                    UUID uuid = UUID.fromString(json.getString("uuid"));
+                    String message = json.getString("message");
+                    
+                    if (filename.equals("friendship"))
+                    {
+                        JSONObject internal = json.getJSONObject("data");
+                        
+                        JSONObject jsonPerson = internal.getJSONObject("person");
+                        String id = jsonPerson.getString("ID");
+                        Person per = ApplicationController.getInstance().getOriginalPersons().get(id);
+                        Friendship f = new Friendship(per, internal.getInt("amountOfWork"));
+                        list.add(new Notification(nt, message, f, uuid));
+                    }
+                    else if (filename.equals("string"))
+                    {
+                        list.add(new Notification(nt, message, json.getString("data"), uuid));
+                    }
+
+                }
+                scanner.close();
             }
-            scanner.close();
         }
-        catch(FileNotFoundException e)
+        catch (FileNotFoundException e)
         {
             logger.error("error en la lectura: ", e);
             exception = e;
         }
-                
+
         if (exception != null)
+        {
             throw exception;
-        
+        }
+
         return list;
     }
 }

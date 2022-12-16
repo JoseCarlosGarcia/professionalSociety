@@ -22,11 +22,14 @@ import cu.edu.cujae.ed.snetwork.serializers.PersonImporter;
 import cu.edu.cujae.ed.snetwork.ui.MainWindow;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
+import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
@@ -80,7 +83,7 @@ public class Launcher
                         {
                             String id = p.getID();
                             manager.addProfile(id);
-
+                            snet.getPendantNotifications().put(p, new LinkedList<>());
                             try
                             {
                                 p.setPhoto(manager.getPictureInProfile(id, FileManager.PPIC_NAME));
@@ -91,6 +94,7 @@ public class Launcher
                                              getLocalizedMessage());
                             }
                         }
+                        snet.loadNotification(persons);
                         try
                         {
                             snet.loadGraph();

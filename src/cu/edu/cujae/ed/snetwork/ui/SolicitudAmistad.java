@@ -25,7 +25,9 @@ import cu.edu.cujae.graphy.utils.Pair;
 import java.awt.Image;
 import java.util.UUID;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 /**
  *
@@ -36,17 +38,24 @@ public class SolicitudAmistad extends javax.swing.JFrame
     private Friendship friendship;
     private Person solicitada;
     private Notification n;
+    private JPopupMenu jPopupMenu;
+    private JMenuItem j;
+
     /**
      * Creates new form SolicitudAmistad
      * @param n
      * @param solicitada
      */
-    public SolicitudAmistad(Notification n, Person solicitada)
+    public SolicitudAmistad(Notification n, Person solicitada, JPopupMenu jPopupMenu, JMenuItem j)
     {
         initComponents();
         this.friendship = n.getData();
         this.solicitada = solicitada;
         this.n = n;
+        this.jPopupMenu = jPopupMenu;
+        this.j = j;
+        if (((Friendship) n.getData()).getPerson() != null)
+        {
         if (((Friendship) n.getData()).getPerson().getPhoto() != null)
         {
             Image pic = ((Friendship) n.getData()).getPerson().getPhoto().
@@ -57,7 +66,12 @@ public class SolicitudAmistad extends javax.swing.JFrame
         jLabelApellidos.setText(friendship.getPerson().getLastName());
         jLabelPais.setText(friendship.getPerson().getCountry());
         jLabelProfesion.setText(friendship.getPerson().getProfession());
-        jLabelTrabajos.setText(String.valueOf(friendship.getAmountOfWork()));
+            jLabelTrabajos.setText(String.valueOf(friendship.getAmountOfWork()));
+        }
+        else
+        {
+
+        }
     }
 
     /**
@@ -236,15 +250,17 @@ public class SolicitudAmistad extends javax.swing.JFrame
        try{
            if (ApplicationController.getInstance().friendRequest(friendship, solicitada))
            {
-               System.out.println("Siiiiii entrooooo");
-               ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
                ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(
                    new Notification(NotificationType.CONFIRMATION, " ", solicitada.getName() + " " + solicitada.
                                     getLastName() + " ha aceptado tu solicitud de amistad", UUID.randomUUID()));
                JOptionPane.showMessageDialog(null, friendship.getPerson().getName() + " " + friendship.getPerson().
                                              getLastName() + " y usted ahora son amigos", "Amistad",
                                              JOptionPane.INFORMATION_MESSAGE);
-        }
+           }
+           jPopupMenu.remove(j);
+           ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
+           System.out.println("ssiiiisisii");
+           
        } catch(IllegalArgumentException e){
            JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
         }
@@ -259,6 +275,7 @@ public class SolicitudAmistad extends javax.swing.JFrame
             NotificationType.NEGATION, " ",
             solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado tu solicitud de amistad", UUID.
             randomUUID()));
+        jPopupMenu.remove(j);
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

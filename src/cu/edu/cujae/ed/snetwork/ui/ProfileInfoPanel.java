@@ -19,6 +19,7 @@ package cu.edu.cujae.ed.snetwork.ui;
 import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
+import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
@@ -338,15 +339,43 @@ public class ProfileInfoPanel extends JPanel
                     switch (n.getType())
                     {
                         case FRINDSHIP_REQUEST:
-                            @SuppressWarnings("unchecked") SolicitudAmistad sa = new SolicitudAmistad(n, person);
-                            sa.setVisible(true);
-                            jPopupMenu2.remove(j);
+                            if (((Friendship) n.getData()).getPerson() != null)
+                            {
+                                @SuppressWarnings("unchecked")
+                                SolicitudAmistad sa = new SolicitudAmistad(n, person, jPopupMenu2, j);
+                                sa.setVisible(true);
+                            }
+                            else
+                            {
+                                JOptionPane.showMessageDialog(null, "Este perfil fue eliminado", "Solicitud de amistad",
+                                                              JOptionPane.INFORMATION_MESSAGE);
+                                ApplicationController.getInstance().
+                                    getPendantNotifications().get(person)
+                                    .remove(n);
+                                jPopupMenu2.remove(j);
+                            }
                             break;
                         case WORKLOAD_MODIFICATION:
+                            if (((Friendship) n.getData()).getPerson() != null)
+                            {
                             @SuppressWarnings("unchecked") ModificarCantidadTrabajo mt = new ModificarCantidadTrabajo(n,
                                                                                                                       person);
                             mt.setVisible(true);
-                            jPopupMenu2.remove(j);
+                                ApplicationController.getInstance().
+                                    getPendantNotifications().get(person)
+                                    .remove(n);
+                                jPopupMenu2.remove(j);
+                            }
+                            else
+                            {
+                                JOptionPane.showMessageDialog(null, "Este perfil fue eliminado", "Solicitud de amistad",
+                                                              JOptionPane.INFORMATION_MESSAGE);
+                                ApplicationController.getInstance().
+                                    getPendantNotifications().get(person)
+                                    .remove(n);
+                                jPopupMenu2.remove(j);
+
+                            }
                             break;
                         case CONFIRMATION:
                             JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",

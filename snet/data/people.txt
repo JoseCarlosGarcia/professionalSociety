@@ -18,4 +18,3 @@ Gabriela,Hernández Felipe,02101267230,Costa Rica,Licenciada en Educación,7230
 Melissa,Suárez Urquiza,02032267050,Argentina,Licenciada en Biología,7050
 Jordi,Pinto Pedraza,01110867763,Marruecos,Probador de software,7763
 Verónica,Rigual Cabezas,02022066976,Egipto,Ingeniera Civil,6976
-Tony,Garcia,02102707592,Porf,Porf,0505

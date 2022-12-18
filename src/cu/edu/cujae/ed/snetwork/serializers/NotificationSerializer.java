@@ -82,9 +82,18 @@ public class NotificationSerializer
 
             for (Notification n : list)
             {
+                boolean result = false;
+                if (n.getData() instanceof Friendship && ((Friendship) n.getData()).getPerson() == null)
+                {
+                    result = false;
+                }
+
+                if (!result)
+                {
                 JSONObject object = new JSONObject(n);
                 object.write(bfWriter);
-                bfWriter.newLine();
+                    bfWriter.newLine();
+                }
             }
             bfWriter.close();
 
@@ -146,8 +155,11 @@ public class NotificationSerializer
                         JSONObject jsonPerson = internal.getJSONObject("person");
                         String id = jsonPerson.getString("ID");
                         Person per = ApplicationController.getInstance().getOriginalPersons().get(id);
+                        if (per != null)
+                        {
                         Friendship f = new Friendship(per, internal.getInt("amountOfWork"));
-                        list.add(new Notification(nt, message, f, uuid));
+                            list.add(new Notification(nt, message, f, uuid));
+                        }
                     }
                     else if (filename.equals("string"))
                     {

@@ -116,14 +116,14 @@ public class SidePanel extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 if (JOptionPane.
-                    showConfirmDialog(null, "¿Está seguro que desea cancelar la amistad?", TOOL_TIP_TEXT_KEY,
+                    showConfirmDialog(null, "¿Está seguro que desea cancelar la amistad?", "Cancelar amistad",
                                       JOptionPane.YES_NO_OPTION) == 0)
                 {
                     if (ApplicationController.getInstance().deleteFriendship(actual, p))
                     {
                         JOptionPane.showMessageDialog(null,
                                                       p.getName() + " " + p.getLastName() + " y tú ya no son amigos",
-                                                      TOOL_TIP_TEXT_KEY,
+                                                      "Amistad cancelada",
                                                       JOptionPane.INFORMATION_MESSAGE, null);
                         deletePerson(p);
                         sdb.revalidate();

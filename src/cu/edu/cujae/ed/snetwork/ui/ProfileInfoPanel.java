@@ -20,6 +20,7 @@ import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
+import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
@@ -124,10 +125,19 @@ public class ProfileInfoPanel extends JPanel
         });
         m2.addActionListener((ActionEvent e) ->        {
             if (JOptionPane.
-                showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", TOOL_TIP_TEXT_KEY,
+                showConfirmDialog(null, "¿Estás seguro que desea eliminar su perfil?", "Eliminar perfil",
                                   JOptionPane.YES_NO_OPTION) == 0)
             {
+                String id = person.getID();
                 ApplicationController.getInstance().deletePerson(person);
+                try
+                {
+                    mw.getFileManager().deletePicsDirectory(id);
+                }
+                catch (IOException ex)
+                {
+                    java.util.logging.Logger.getLogger(ProfileInfoPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 mw.getCv().getViewport().undock(mw.getCv());
                 mw.setIsOpened(false);
                 mw.getSidePanel().deletePerson(person);
@@ -144,7 +154,10 @@ public class ProfileInfoPanel extends JPanel
                 {
                     mw.getSa().getViewport().undock(mw.getSa());
                 }
+                mw.revalidatePhoto();
                 mw.getCv().getViewport().undock(mw.getCv());
+                mw.revalidatePhoto();
+
             }
         });
 
@@ -295,7 +308,28 @@ public class ProfileInfoPanel extends JPanel
             getPendantNotifications().get(person);
         for (Notification n : listN)
         {
-            JMenuItem j = new JMenuItem(n.getType().toString());
+            String title;
+            switch (n.getType())
+            {
+                case FRINDSHIP_REQUEST:
+                    title = "Solicitud de amistad";
+                    break;
+                case WORKLOAD_MODIFICATION:
+                    title = "Modificar trabajos";
+                    break;
+                case CONFIRMATION:
+                    title = "Confirmación";
+                    break;
+                case NEGATION:
+                    title = "Negación";
+                    break;
+                default:
+                    title = "Información";
+                    break;
+            }
+
+            JMenuItem j = new JMenuItem(title);
+
             j.addActionListener(new AbstractAction()
             {
                 @Override
@@ -317,11 +351,17 @@ public class ProfileInfoPanel extends JPanel
                         case CONFIRMATION:
                             JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",
                                                           JOptionPane.INFORMATION_MESSAGE);
+                            ApplicationController.getInstance().
+                                getPendantNotifications().get(person)
+                                .remove(n);
                             jPopupMenu2.remove(j);
                             break;
                         default:
-                            JOptionPane.showMessageDialog(null, n.getMessage(), "Información",
+                            JOptionPane.showMessageDialog(null, n.getData().toString(), "Información",
                                                           JOptionPane.INFORMATION_MESSAGE);
+                            ApplicationController.getInstance().
+                                getPendantNotifications().get(person)
+                                .remove(n);
                             jPopupMenu2.remove(j);
                             break;
                     }

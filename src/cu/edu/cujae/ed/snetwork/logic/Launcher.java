@@ -78,7 +78,7 @@ public class Launcher
                         PersonImporter imp = new PersonImporter(manager.getFile(FileManager.PEOPLE_TXT));
                         List<Person> persons = imp.deserialize();
                         snet.constructOriginalMap(persons);
-
+                        ApplicationController.getInstance().setLabelCounter(persons.size());
                         for (Person p : persons)
                         {
                             String id = p.getID();

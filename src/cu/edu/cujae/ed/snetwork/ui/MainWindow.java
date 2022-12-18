@@ -109,9 +109,6 @@ public class MainWindow extends javax.swing.JFrame
     {
         initComponents();
         this.fileManager = fileManager;
-        File file = new File(this.fileManager.getAppDirectory() + "/icon.jpg");
-
-        setIconImage(ImageIO.read(file));
         this.isOpened = false;
         this.sidePanel = new SidePanel();
         this.graphView = new JPanel();
@@ -122,9 +119,7 @@ public class MainWindow extends javax.swing.JFrame
         
         logger = LoggerFactory.getLogger(MainWindow.class);
         
-        sidePanel.addSelectionListener((var person) -> 
- 
-        {
+        sidePanel.addSelectionListener((var person) ->        {
             if (!isOpened)
             {
             Autenticacion a = new Autenticacion(this, false, person);
@@ -263,7 +258,8 @@ public class MainWindow extends javax.swing.JFrame
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
     {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
+        Creditos cr = new Creditos(this, true);
+        cr.setVisible(true);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem3ActionPerformed

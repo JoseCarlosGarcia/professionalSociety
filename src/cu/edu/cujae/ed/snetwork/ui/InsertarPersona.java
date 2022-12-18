@@ -113,6 +113,13 @@ public class InsertarPersona extends javax.swing.JFrame
 
         jLabel5.setText("Profesión:");
 
+        jTextNombre.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jTextNombreActionPerformed(evt);
+            }
+        });
         jTextNombre.addKeyListener(new java.awt.event.KeyAdapter()
         {
             public void keyReleased(java.awt.event.KeyEvent evt)
@@ -174,6 +181,14 @@ public class InsertarPersona extends javax.swing.JFrame
         });
 
         jLabel7.setText("Contraseña:");
+
+        jTextPassword.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyReleased(java.awt.event.KeyEvent evt)
+            {
+                jTextPasswordKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -350,14 +365,9 @@ public class InsertarPersona extends javax.swing.JFrame
 
     private void jTextNombreKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTextNombreKeyTyped
     {//GEN-HEADEREND:event_jTextNombreKeyTyped
-        int key = evt.getKeyChar();
+        char key = evt.getKeyChar();
 
-        boolean mayuscula = key >= 65 && key <= 90;
-        boolean minusculas = key >= 97 && key <= 122;
-        boolean espacio = key == 32;
-        //boolean tildes = key == 131 || key == 142 || key == 146 || key == 151 || key == 156 || key == 131 || key ==231 || key ==234 || key ==238 || key ==242;
-
-        if (!(minusculas || mayuscula || espacio))
+        if (!Character.isAlphabetic(key))
         {
             evt.consume();
         }
@@ -381,14 +391,9 @@ public class InsertarPersona extends javax.swing.JFrame
 
     private void jTextApellidosKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTextApellidosKeyTyped
     {//GEN-HEADEREND:event_jTextApellidosKeyTyped
-        int key = evt.getKeyChar();
+        char key = evt.getKeyChar();
 
-        boolean mayuscula = key >= 65 && key <= 90;
-        boolean minusculas = key >= 97 && key <= 122;
-        boolean espacio = key == 32;
-        //boolean tildes = key == 131 || key == 142 || key == 146 || key == 151 || key == 156 || key == 131 || key ==231 || key ==234 || key ==238 || key ==242;
-
-        if (!(minusculas || mayuscula || espacio))
+        if (!Character.isAlphabetic(key))
         {
             evt.consume();
         }
@@ -396,14 +401,9 @@ public class InsertarPersona extends javax.swing.JFrame
 
     private void jTextPaisKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTextPaisKeyTyped
     {//GEN-HEADEREND:event_jTextPaisKeyTyped
-        int key = evt.getKeyChar();
+        char key = evt.getKeyChar();
 
-        boolean mayuscula = key >= 65 && key <= 90;
-        boolean minusculas = key >= 97 && key <= 122;
-        boolean espacio = key == 32;
-        //boolean tildes = key == 131 || key == 142 || key == 146 || key == 151 || key == 156 || key == 131 || key ==231 || key ==234 || key ==238 || key ==242;
-
-        if (!(minusculas || mayuscula || espacio))
+        if (!Character.isAlphabetic(key))
         {
             evt.consume();
         }
@@ -411,14 +411,9 @@ public class InsertarPersona extends javax.swing.JFrame
 
     private void jTextProfesionKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTextProfesionKeyTyped
     {//GEN-HEADEREND:event_jTextProfesionKeyTyped
-        int key = evt.getKeyChar();
+        char key = evt.getKeyChar();
 
-        boolean mayuscula = key >= 65 && key <= 90;
-        boolean minusculas = key >= 97 && key <= 122;
-        boolean espacio = key == 32;
-        //boolean tildes = key == 131 || key == 142 || key == 146 || key == 151 || key == 156 || key == 131 || key ==231 || key ==234 || key ==238 || key ==242;
-
-        if (!(minusculas || mayuscula || espacio))
+        if (!Character.isAlphabetic(key))
         {
             evt.consume();
         }
@@ -457,11 +452,13 @@ public class InsertarPersona extends javax.swing.JFrame
         {
             if (validarID() && validarNombre() && validarApellidos() && validarPais() && validarProfesion())
             {
-                try
+                String ID = jTextID.getText();
+                if (!ApplicationController.getInstance().existProfile(ID))
+                {
+                    try
                 {
                     String fileName = FileManager.PPIC_NAME;
 
-                    String ID = jTextID.getText();
                     String nombre = jTextNombre.getText();
                     String apellidos = jTextApellidos.getText();
                     String pais = jTextPais.getText();
@@ -487,6 +484,15 @@ public class InsertarPersona extends javax.swing.JFrame
                             JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), ex.toString(),
                                                           JOptionPane.ERROR_MESSAGE);
                         }
+                    } else {
+                        mw.getFileManager().addProfile(ID);
+                            Path path
+                                     = Paths.get(mw.getFileManager().getProfileDir(ID).
+                                    getAbsolutePath(), fileName);
+                            if (path.toFile().exists() == false)
+                            {
+                                Files.copy(Path.of("snet/data/ppic.jpg"), path);
+                        }
                     }
 
                     FileManager fm = mw.getFileManager();
@@ -502,13 +508,20 @@ public class InsertarPersona extends javax.swing.JFrame
                     JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(), ex.toString(),
                                                   JOptionPane.ERROR_MESSAGE);
                 }
+                    this.dispose();
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "Ya existe un perfil con este ID", "No se puede añadir",
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         }
         else
         {
             JOptionPane.showMessageDialog(null, "Complete todos los datos", "Campos vacíos", JOptionPane.ERROR_MESSAGE);
         }
-        this.dispose();
+
     }//GEN-LAST:event_jButtonCrearActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
@@ -530,13 +543,23 @@ public class InsertarPersona extends javax.swing.JFrame
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jTextNombreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jTextNombreActionPerformed
+    {//GEN-HEADEREND:event_jTextNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextNombreActionPerformed
+
+    private void jTextPasswordKeyReleased(java.awt.event.KeyEvent evt)//GEN-FIRST:event_jTextPasswordKeyReleased
+    {//GEN-HEADEREND:event_jTextPasswordKeyReleased
+        activarCrear();
+    }//GEN-LAST:event_jTextPasswordKeyReleased
+
     /**
      * @param args the command line arguments
      */
     public void activarCrear()
     {
         if (!jTextNombre.getText().isEmpty() && !jTextApellidos.getText().isEmpty() && !jTextID.getText().isEmpty() && !jTextPais.
-            getText().isEmpty() && !jTextProfesion.getText().isEmpty())
+            getText().isEmpty() && !jTextProfesion.getText().isEmpty() && !jTextPassword.getText().isEmpty())
         {
             jButtonCrear.setEnabled(true);
         }

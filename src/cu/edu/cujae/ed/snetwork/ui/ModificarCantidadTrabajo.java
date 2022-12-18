@@ -269,7 +269,8 @@ public class ModificarCantidadTrabajo extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         ApplicationController.getInstance().getPendantNotifications().get(solicitada).remove(n);
         ApplicationController.getInstance().getPendantNotifications().get(friendship.getPerson()).add(new Notification(
-            NotificationType.NEGATION, null,
+            NotificationType.NEGATION,
+            solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten",
             solicitada.getName() + " " + solicitada.getLastName() + " no ha aceptado modificar la cantidad de trabajos que comparten",
             UUID.randomUUID()));
     }//GEN-LAST:event_jButton1ActionPerformed

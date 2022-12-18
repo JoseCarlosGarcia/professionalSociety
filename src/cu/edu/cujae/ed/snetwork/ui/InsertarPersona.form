@@ -198,6 +198,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextNombre">
           <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextNombreActionPerformed"/>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextNombreKeyReleased"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextNombreKeyTyped"/>
           </Events>
@@ -232,6 +233,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextPassword">
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextPasswordKeyReleased"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

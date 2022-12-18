@@ -19,6 +19,7 @@ package cu.edu.cujae.ed.snetwork.utils;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -112,5 +113,12 @@ public final class FileManager
     public File getGraphSerializationFile()
     {
         return new File(appDirectory, "database.db");
+    }
+
+    public void deletePicsDirectory(String ID) throws IOException
+    {
+        File file = new File(getProfileDir(ID), "ppic.jpg");
+        file.delete();
+        profilePics.remove(ID);
     }
 }

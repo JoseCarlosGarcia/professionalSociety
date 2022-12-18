@@ -8,7 +8,6 @@ import cu.edu.cujae.ed.snetwork.serializers.NotificationSerializer;
 import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
-import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.algorithms.FirstLevelCommunities;
 import cu.edu.cujae.graphy.algorithms.IsolatedVertices;
 import cu.edu.cujae.graphy.core.Edge;
@@ -76,6 +75,16 @@ public class ApplicationController
         this.labelCounter = 0;
 
         this.originalPersons = new HashMap<>(150);
+    }
+
+    public int getLabelCounter()
+    {
+        return labelCounter;
+    }
+
+    public void setLabelCounter(int labelCounter)
+    {
+        this.labelCounter = labelCounter;
     }
 
     private CustomSerializer<Object> getPersonSerializer()
@@ -187,10 +196,16 @@ public class ApplicationController
         if (result)
         {
             pendantNotifications.put(p, new LinkedList<>());
+            socialNetWork.add(labelCounter++, p);
+            originalPersons.put(p.getID(), p);
         }
-        return result ? socialNetWork.add(labelCounter++, p) : result;
+        return result;
     }
 
+    public boolean existProfile(String ID)
+    {
+        return originalPersons.containsKey(ID);
+    }
     //Obtener las personas que no tienen conexión con nadie más
     public LinkedList<Person> isolatedPersons()
     {
@@ -436,6 +451,8 @@ public class ApplicationController
         if (label >= 0)
         {
             socialNetWork.removeAt(label);
+            pendantNotifications.remove(p);
+            originalPersons.remove(p.getID(), p);
         }
         return label >= 0;
     }

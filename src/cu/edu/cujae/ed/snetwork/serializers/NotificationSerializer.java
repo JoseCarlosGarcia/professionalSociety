@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,7 @@ public class NotificationSerializer
             {
                 JSONObject object = new JSONObject(n);
                 object.write(bfWriter);
+                bfWriter.newLine();
             }
             bfWriter.close();
 
@@ -154,6 +156,7 @@ public class NotificationSerializer
 
                 }
                 scanner.close();
+                file.delete();
             }
         }
         catch (FileNotFoundException e)

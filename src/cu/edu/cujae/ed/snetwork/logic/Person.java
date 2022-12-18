@@ -219,7 +219,7 @@ public final class Person
 
     public boolean equals(Person p)
     {
-        return p.getID().equals(ID);
+        return ID.equalsIgnoreCase(p.getID());
     }
 
     /**

@@ -206,6 +206,8 @@ public class SideBarButton extends JPanel
         if (person != null && person.getPhoto() != null)
         {
             photoLabel.setIcon(new ImageIcon(person.getPhoto().getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+            nameLabel.setText(person.getName() + " " + person.getLastName());
+            infoLabel.setText(person.getProfession() + " - " + person.getCountry());
         }
     }
     

@@ -474,11 +474,10 @@ public class ApplicationController
                         if (label2 >= 0)
                         {
                             //GraphIterator<Person> it = socialNetWork.iterator(label1);
-
                             result = socialNetWork.disconnect(label1, label2);
-                            if (result)
+                            if (!result)
                             {
-                                System.out.println("AAAAAA");
+                                result = socialNetWork.disconnect(label2, label1);
                             }
                         }
                         else
@@ -593,13 +592,13 @@ public class ApplicationController
      * @param ite GraphIterator<Person> en la posicion de la persona
      * @return
      */
-    public Tree<Person> getCollaborationExpansionTree(GraphIterator<Person> ite)
+    public Tree<Pair<Person, Integer>> getCollaborationExpansionTree(GraphIterator<Person> ite)
     {
         int work = Integer.MAX_VALUE;
-        Person root = ite.next(ite.getLabel());
-        Tree<Person> tree = new DefaultGeneralTree<>();
-        TreeNode<Person> temporalNode = tree.add(null, root);
-        TreeNode<Person> parent = temporalNode;
+        Pair<Person, Integer> root = new Pair<>(ite.next(ite.getLabel()), 0);
+        Tree<Pair<Person, Integer>> tree = new DefaultGeneralTree<>();
+        TreeNode<Pair<Person, Integer>> temporalNode = tree.add(null, root);
+        TreeNode<Pair<Person, Integer>> parent = temporalNode;
         LinkedList<Pair<Person, Integer>> list = new LinkedList<>();
         for (Edge e : ite.getAllAdjacentEdges())
         {
@@ -618,12 +617,12 @@ public class ApplicationController
             Pair<Person, Integer> p = list.poll();
             if (p.getLast() == work)
             {
-                temporalNode = tree.add(parent, p.getFirst());
+                temporalNode = tree.add(parent, p);
             }
             else if (p.getLast() < work)
             {
                 parent = temporalNode;
-                temporalNode = tree.add(parent, p.getFirst());
+                temporalNode = tree.add(parent, p);
             }
             work = p.getLast();
         }
@@ -647,7 +646,7 @@ public class ApplicationController
             Person p = it.next();
             if (!it.getAllAdjacentEdges().isEmpty())
             {
-                Tree<Person> tree = getCollaborationExpansionTree(socialNetWork.iterator(it.getLabel()));
+                Tree<Pair<Person, Integer>> tree = getCollaborationExpansionTree(socialNetWork.iterator(it.getLabel()));
                 int depthTree = tree.countLevels();
 
                 if (depthTree > depthMax)

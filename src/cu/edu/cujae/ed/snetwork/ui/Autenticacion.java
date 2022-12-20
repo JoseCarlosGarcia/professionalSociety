@@ -18,6 +18,9 @@ package cu.edu.cujae.ed.snetwork.ui;
 
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.flexdock.docking.DockingConstants;
 
@@ -168,13 +171,21 @@ public class Autenticacion extends javax.swing.JDialog
 
         if (String.valueOf(jPassword.getPassword()).equals(pasword))
         {
-            dispose();
-            ProfileInfoPanel pip = new ProfileInfoPanel(person, mw);
-            mw.setIsOpened(true);
-            mw.setCv(mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f));
-            mw.getCv().setTitle(person.getName());
-            mw.getCv().setTabText(person.getName());
-        } else {
+            try {
+                dispose();
+                ProfileInfoPanel pip = new ProfileInfoPanel(person, mw);
+                mw.setIsOpened(true);
+                mw.setCv(mw.dock(pip, DockingConstants.CENTER_REGION, 0.75f));
+                mw.getCv().setTitle(person.getName());
+                mw.getCv().setTabText(person.getName());
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(Autenticacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else
+        {
             jLabelCI.setVisible(true);
         }
                                                      

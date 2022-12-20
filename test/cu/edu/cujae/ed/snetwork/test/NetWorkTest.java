@@ -8,11 +8,15 @@ import cu.edu.cujae.ed.snetwork.logic.ApplicationController;
 import cu.edu.cujae.ed.snetwork.logic.Person;
 import cu.edu.cujae.ed.snetwork.ui.SidePanel;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
+import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import cu.edu.cujae.graphy.utils.Pair;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,7 +32,7 @@ public class NetWorkTest
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         ApplicationController snet = ApplicationController.getInstance();
         /*Person brian
@@ -193,17 +197,95 @@ public class NetWorkTest
         snet.friendRequest(new Friendship(marcos, 20), gabriela);
 
         snet.friendRequest(new Friendship(gabriela, 15), jordi);
-        int label = ApplicationController.getInstance().getLabelofPerson(amanda);
+        int label = ApplicationController.getInstance().getLabelofPerson(jose);
         GraphIterator<Person> it = snet.getsocialNetWork().iterator(label);
         it.next(label);
+        Tree<Pair<Person, Integer>> treeF = snet.getCollaborationExpansionTree(it);
+        Tree<Person> treeeee = snet.getConexionOfAPerson(jose);
+        System.out.println(treeeee.toString());
 
-        Tree<Person> tree = snet.getCollaborationExpansionTree(it);
         
-        LinkedList<Person> list = snet.getResearchLeaders();
+        
+         
+
+        /*public Tree<Person> getCollaborationExpansionTree(GraphIterator<Person> ite)
+    {
+        int work = Integer.MAX_VALUE;
+        Person root = ite.next(ite.getLabel());
+        Tree<Person> tree = new DefaultGeneralTree<>();
+        TreeNode<Person> temporalNode = tree.add(null, root);
+        TreeNode<Person> parent = temporalNode;
+        LinkedList<Pair<Person, Integer>> list = new LinkedList<>();
+        for (Edge e : ite.getAllAdjacentEdges())
+        {
+            @SuppressWarnings("unchecked")
+            Pair<Person, Integer> pair = new Pair(e.getFinalNode().get() == root ? e.getStartNode().get() : e.
+                getFinalNode().get(),
+                                                  e.getWeight().getValue());
+            list.add(pair);
+        }
+
+        Collections.sort(list, (Pair<Person, Integer> o1, Pair<Person, Integer> o2) -> o2.getLast().compareTo(o1.
+            getLast()));
+
+        while (!list.isEmpty())
+        {
+            Pair<Person, Integer> p = list.poll();
+            if (p.getLast() == work)
+            {
+                temporalNode = tree.add(parent, p.getFirst());
+            }
+            else if (p.getLast() < work)
+            {
+                parent = temporalNode;
+                temporalNode = tree.add(parent, p.getFirst());
+            }
+            work = p.getLast();
+        }
+
+        return tree;
+    }*/
+
+    /**
+     * Método para obtener líderes de investigación
+     *
+     * @return
+     */
+        /*public LinkedList<Person> getResearchLeaders()
+    {
+        LinkedList<Person> researchLeaders = new LinkedList<>();
+        int depthMax = 0;
+
+        GraphIterator<Person> it = (GraphIterator<Person>) socialNetWork.breadthFirstSearchIterator(true);
+        while (it.hasNext())
+        {
+            Person p = it.next();
+            if (!it.getAllAdjacentEdges().isEmpty())
+            {
+                Tree<Person> tree = getCollaborationExpansionTree(socialNetWork.iterator(it.getLabel()));
+                int depthTree = tree.countLevels();
+
+                if (depthTree > depthMax)
+                {
+                    researchLeaders.clear();
+                    researchLeaders.add(p);
+                    depthMax = depthTree;
+                }
+                else if (depthTree == depthMax)
+                {
+                    researchLeaders.add(p);
+                }
+            }
+        }
+
+        return researchLeaders;
+    }*/
+        
+ /*LinkedList<Person> list = snet.getResearchLeaders();
         for (Person p : list)
         {
             System.out.println(p.getName());
-        }
+        }*/
         /*System.out.println(snet.getsocialNetWork().isVertexAdjacent(1, 4));
         snet.deleteFriendship(jose, amanda);
         System.out.println(snet.getsocialNetWork().isVertexAdjacent(1, 4));*/

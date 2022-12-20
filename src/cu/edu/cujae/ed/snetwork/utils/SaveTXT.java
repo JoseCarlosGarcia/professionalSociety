@@ -17,12 +17,18 @@
 package cu.edu.cujae.ed.snetwork.utils;
 
 import cu.edu.cujae.ed.snetwork.logic.Person;
+import cu.edu.cujae.graphy.core.Tree;
+import cu.edu.cujae.graphy.core.TreeNode;
+import cu.edu.cujae.graphy.core.trees.DefaultGeneralTree;
+import cu.edu.cujae.graphy.utils.Pair;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -106,5 +112,90 @@ public class SaveTXT
             }
             bfWriter.close();
         }
+    }
+
+    public static void saveTree(Tree<Pair<Person, Integer>> tree, FileManager filemanager) throws
+        IOException
+    {
+        Pair<Person, Integer> root = tree.getRoot().get();
+        TreeNode<Pair<Person, Integer>> rootTree = tree.getRoot();
+        File file = new File(filemanager.getAppDirectory(), root.getFirst().getName() + "-Amigos.txt");
+        if (file.exists() == false)
+        {
+            file.createNewFile();
+        }
+        FileWriter fileWriter = new FileWriter(file);
+        try ( BufferedWriter bfWriter = new BufferedWriter(fileWriter))
+        {
+            bfWriter.write("Relación jerárquica de los amigos de " + root.getFirst().getName() + ":\n");
+            Object[] coll = tree.toArray();
+            Integer inte = Integer.MAX_VALUE;
+            for (int i = 1; i < coll.length; i++)
+            {
+                @SuppressWarnings("unchecked")
+                Pair<Person, Integer> p = (Pair<Person, Integer>) coll[i];
+                if (p.getLast() < inte)
+                {
+                    //String line = p.getFirst().getName() + " " + p.getFirst().getLastName() + " " + p.getLast().toString();
+                    bfWriter.write("\n");
+                }
+                bfWriter.write(p.getFirst().getName() + " " + p.getFirst().getLastName() + " " + p.getLast() + "   ");
+                inte = p.getLast();
+            }
+            bfWriter.close();
+        }
+    }
+    
+    public static void saveTreeConexion(Tree<Person> tree, FileManager filemanager) throws IOException
+    {
+        Person p = tree.getRoot().get();
+        File file = new File(filemanager.getAppDirectory(), p.getName() + "-Conexiones.txt");
+        if (file.exists() == false)
+        {
+            file.createNewFile();
+        }
+        
+        FileWriter fileWriter = new FileWriter(file);
+        
+        try ( BufferedWriter bfWriter = new BufferedWriter(fileWriter))
+        {
+            bfWriter.write("Conexión del grafo a partir de" + p.getLastName() + "\n");
+            bfWriter.write(tree.toString());
+            bfWriter.close();
+            
+        }
+    }
+    
+    public static void saveTreeG(Tree<Person> tree) throws IOException
+    {
+        //File file = new File(filemanager.getAppDirectory(), "-Amigos.txt");
+        /*if (file.exists() == false)
+        {
+            file.createNewFile();
+        }
+        FileWriter fileWriter = new FileWriter(file);*/
+ /*try ( BufferedWriter bfWriter = new BufferedWriter(fileWriter))
+        {*/
+            TreeNode<Person> node = tree.getRoot();
+            String result = node.get().getName() + "\n";
+            Collection<TreeNode<Person>> coll = node.getChildren();
+            //bfWriter.write(node.get().getName() + "\n");
+            for (TreeNode<Person> tn : coll)
+            {
+                imprimir(tn);
+        }
+        /*}*/
+        System.out.println();
+    }
+    
+    public static String imprimir(TreeNode<Person> tn)
+    {
+        Person p = tn.get();
+        String result = "  -" + p.getName() + "\n  ";
+        for (TreeNode<Person> treenode : tn.getChildren())
+        {
+            result += imprimir(tn);
+        }
+        return result;
     }
 }

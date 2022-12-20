@@ -157,7 +157,7 @@ public class NotificationSerializer
                         Person per = ApplicationController.getInstance().getOriginalPersons().get(id);
                         if (per != null)
                         {
-                        Friendship f = new Friendship(per, internal.getInt("amountOfWork"));
+                            Friendship f = new Friendship(per, internal.getInt("amountOfWork"));
                             list.add(new Notification(nt, message, f, uuid));
                         }
                     }

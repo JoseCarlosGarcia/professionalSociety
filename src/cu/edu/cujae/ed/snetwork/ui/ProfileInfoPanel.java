@@ -22,9 +22,12 @@ import cu.edu.cujae.ed.snetwork.utils.FileManager;
 import cu.edu.cujae.ed.snetwork.utils.Friendship;
 import cu.edu.cujae.ed.snetwork.utils.Notification;
 import cu.edu.cujae.ed.snetwork.utils.NotificationType;
+import cu.edu.cujae.ed.snetwork.utils.SaveTXT;
+import cu.edu.cujae.ed.snetwork.utils.SaveTree;
 import cu.edu.cujae.ed.snetwork.utils.TreeUtils;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import cu.edu.cujae.graphy.utils.Pair;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,7 +72,7 @@ public class ProfileInfoPanel extends JPanel
      *
      * @param p
      */
-    public ProfileInfoPanel(Person p, MainWindow mw)
+    public ProfileInfoPanel(Person p, MainWindow mw) throws IOException
     {
         initComponents();
         this.sp = null;
@@ -93,14 +96,16 @@ public class ProfileInfoPanel extends JPanel
 
         Tree<Person> treeC = ApplicationController.getInstance().getConexionOfAPerson(p);
 
-        Tree<Person> treeA = ApplicationController.getInstance().getCollaborationExpansionTree(gI);
+        Tree<Pair<Person, Integer>> treeA = ApplicationController.getInstance().getCollaborationExpansionTree(gI);
 
         DefaultTreeModel modelC = (DefaultTreeModel) jTreeC.getModel();
         DefaultTreeModel modelA = (DefaultTreeModel) jTreeA.getModel();
 
         modelC.setRoot(TreeUtils.makeTree(treeC));
-        modelA.setRoot(TreeUtils.makeTree(treeA));
-
+        modelA.setRoot(TreeUtils.makeTreeP(treeA));
+        SaveTXT.saveTree(treeA, mw.getFileManager());
+        SaveTXT.saveTreeConexion(treeC, mw.getFileManager());
+        
         JMenuItem m1 = new JMenuItem("Modificar Perfil");
         JMenuItem m8 = new JMenuItem("Cambiar contraseña");
         JMenuItem m2 = new JMenuItem("Eliminar Perfil");
@@ -150,6 +155,8 @@ public class ProfileInfoPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                if (validarNombre() && validarApellidos() && validarPais() && validarProfesion())
+                {
                 mw.setIsOpened(false);
                 if (mw.getSa() != null && mw.isIsOSE())
                 {
@@ -157,7 +164,13 @@ public class ProfileInfoPanel extends JPanel
                 }
                 mw.revalidatePhoto();
                 mw.getCv().getViewport().undock(mw.getCv());
-                mw.revalidatePhoto();
+                    mw.revalidatePhoto();
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Verifique los campos de datos personales", "Error",
+                                                  JOptionPane.WARNING_MESSAGE);
+                }
 
             }
         });
@@ -501,6 +514,13 @@ public class ProfileInfoPanel extends JPanel
                 nameTextActionPerformed(evt);
             }
         });
+        nameText.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyTyped(java.awt.event.KeyEvent evt)
+            {
+                nameTextKeyTyped(evt);
+            }
+        });
 
         jLabel3.setText("Apellidos");
 
@@ -517,6 +537,13 @@ public class ProfileInfoPanel extends JPanel
                 apellidosTextFocusLost(evt);
             }
         });
+        apellidosText.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyTyped(java.awt.event.KeyEvent evt)
+            {
+                apellidosTextKeyTyped(evt);
+            }
+        });
 
         paisText.setEditable(false);
         paisText.setText("jTextField3");
@@ -527,6 +554,13 @@ public class ProfileInfoPanel extends JPanel
                 paisTextFocusLost(evt);
             }
         });
+        paisText.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyTyped(java.awt.event.KeyEvent evt)
+            {
+                paisTextKeyTyped(evt);
+            }
+        });
 
         profesionTextField.setEditable(false);
         profesionTextField.setText("jTextField4");
@@ -535,6 +569,13 @@ public class ProfileInfoPanel extends JPanel
             public void focusLost(java.awt.event.FocusEvent evt)
             {
                 profesionTextFieldFocusLost(evt);
+            }
+        });
+        profesionTextField.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyTyped(java.awt.event.KeyEvent evt)
+            {
+                profesionTextFieldKeyTyped(evt);
             }
         });
 
@@ -653,22 +694,51 @@ public class ProfileInfoPanel extends JPanel
 
     private void nameTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_nameTextFocusLost
     {//GEN-HEADEREND:event_nameTextFocusLost
-        person.setName(nameText.getText());
+        if (validarNombre()){
+        {
+            person.setName(nameText.getText());
+            }
+        }
+        else
+        {
+            nameText.setText(person.getName());
+        }
     }//GEN-LAST:event_nameTextFocusLost
 
     private void apellidosTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_apellidosTextFocusLost
     {//GEN-HEADEREND:event_apellidosTextFocusLost
-        person.setLastName(apellidosText.getText());
+        if (validarApellidos())
+        {
+            person.setLastName(apellidosText.getText());
+        }
+        else
+        {
+            apellidosText.setText(person.getLastName());
+        }
     }//GEN-LAST:event_apellidosTextFocusLost
 
     private void paisTextFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_paisTextFocusLost
     {//GEN-HEADEREND:event_paisTextFocusLost
-        person.setCountry(paisText.getText());
+        if (validarPais())
+        {
+            person.setCountry(paisText.getText());
+        }
+        else
+        {
+            paisText.setText(person.getCountry());
+        }
     }//GEN-LAST:event_paisTextFocusLost
 
     private void profesionTextFieldFocusLost(java.awt.event.FocusEvent evt)//GEN-FIRST:event_profesionTextFieldFocusLost
     {//GEN-HEADEREND:event_profesionTextFieldFocusLost
-        person.setProfession(profesionTextField.getText());
+        if (validarProfesion())
+        {
+            person.setProfession(profesionTextField.getText());
+        }
+        else
+        {
+            profesionTextField.setText(person.getProfession());
+        }
     }//GEN-LAST:event_profesionTextFieldFocusLost
 
     private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_jTabbedPane1MouseClicked
@@ -676,7 +746,160 @@ public class ProfileInfoPanel extends JPanel
         jTreeA.revalidate();
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
+    private void nameTextKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_nameTextKeyTyped
+    {//GEN-HEADEREND:event_nameTextKeyTyped
+        char key = evt.getKeyChar();
 
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
+        {
+            evt.consume();
+        }
+    }//GEN-LAST:event_nameTextKeyTyped
+
+    private void apellidosTextKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_apellidosTextKeyTyped
+    {//GEN-HEADEREND:event_apellidosTextKeyTyped
+        char key = evt.getKeyChar();
+
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
+        {
+            evt.consume();
+        }
+    }//GEN-LAST:event_apellidosTextKeyTyped
+
+    private void paisTextKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_paisTextKeyTyped
+    {//GEN-HEADEREND:event_paisTextKeyTyped
+        char key = evt.getKeyChar();
+
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
+        {
+            evt.consume();
+        }
+    }//GEN-LAST:event_paisTextKeyTyped
+
+    private void profesionTextFieldKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_profesionTextFieldKeyTyped
+    {//GEN-HEADEREND:event_profesionTextFieldKeyTyped
+        char key = evt.getKeyChar();
+
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
+        {
+            evt.consume();
+        }
+    }//GEN-LAST:event_profesionTextFieldKeyTyped
+
+public boolean validarNombre()
+    {
+        boolean result = true;
+        boolean flag;
+        String nombre = nameText.getText();
+        if (!nombre.isBlank())
+        {
+        for (int i = 0; i < nombre.length() && result; i++)
+        {
+            flag = Character.isUpperCase(nombre.charAt(0)) && nombre.charAt(0) != ' ' && (Character.isLetter(nombre.
+                                                                                          charAt(i)) || nombre.charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "El nombre debe iniciar con letra mayúscula", "Nombre incorrecto",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+            }
+        }
+        else
+        {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Inserte un nombre", "Nombre incorrecto",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+
+    }
+
+    public boolean validarApellidos()
+    {
+        boolean result = true;
+        boolean flag;
+        String apellidos = apellidosText.getText();
+        if (!apellidos.isBlank()){
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "Los apellidos deben iniciar con letra mayúscula",
+                                              "Apellidos incorrectos", JOptionPane.ERROR_MESSAGE);
+            }
+            }
+        }
+        else
+        {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Inserte un apellido", "Apellido incorrecto",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
+
+    public boolean validarPais()
+    {
+        boolean result = true;
+        boolean flag;
+        String apellidos = paisText.getText();
+        if (!apellidos.isBlank())
+        {
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "El país debe iniciar con letra mayúscula", "País incorrecto",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+            }
+        }
+        else
+        {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Inserte un país", "País incorrecto",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
+
+    public boolean validarProfesion()
+    {
+        boolean result = true;
+        boolean flag;
+        String apellidos = profesionTextField.getText();
+        if (!apellidos.isBlank())
+        {
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "La profesión debe iniciar con letra mayúscula",
+                                              "Profesión incorrecta", JOptionPane.ERROR_MESSAGE);
+            }
+            }
+        }
+        else
+        {
+            result = false;
+            JOptionPane.showMessageDialog(null, "Inserte una profesión", "Profesión incorrecta",
+                                          JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apellidosText;
     private javax.swing.JLabel jLabel2;

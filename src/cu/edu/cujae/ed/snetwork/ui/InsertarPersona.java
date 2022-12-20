@@ -367,7 +367,7 @@ public class InsertarPersona extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jTextNombreKeyTyped
         char key = evt.getKeyChar();
 
-        if (!Character.isAlphabetic(key))
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
         {
             evt.consume();
         }
@@ -393,7 +393,7 @@ public class InsertarPersona extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jTextApellidosKeyTyped
         char key = evt.getKeyChar();
 
-        if (!Character.isAlphabetic(key))
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
         {
             evt.consume();
         }
@@ -403,7 +403,7 @@ public class InsertarPersona extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jTextPaisKeyTyped
         char key = evt.getKeyChar();
 
-        if (!Character.isAlphabetic(key))
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
         {
             evt.consume();
         }
@@ -413,7 +413,7 @@ public class InsertarPersona extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jTextProfesionKeyTyped
         char key = evt.getKeyChar();
 
-        if (!Character.isAlphabetic(key))
+        if (!Character.isAlphabetic(key) && !Character.isSpaceChar(key))
         {
             evt.consume();
         }

@@ -127,9 +127,9 @@ public class Launcher
                                                   "0203");
                         Person camilo = new Person("Camilo", "Chamorro", "01080725688", "Cuba", "Probador de software",
                                                    "0205");
-                        Person amanda = new Person("Amanda", "Méndez", "02091868898", "Mexico", "Disenadora", "0206");
+                        Person amanda = new Person("Amanda", "Méndez", "02091868898", "Mexico", "Diseñadora", "0206");
                         Person javi
-                                   = new Person("Javier", "Marrero", "01040368898", "Alemania", "Disenador de Software",
+                                   = new Person("Javier", "Marrero", "01040368898", "Alemania", "Diseñador de Software",
                                                 "0208");
                         Person amaya = new Person("Amaya", "Delgado", "02111268898", "Inglaterra",
                                                   "Desarrolladora de videojuegos",

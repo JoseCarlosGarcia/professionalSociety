@@ -21,6 +21,7 @@ import cu.edu.cujae.graphy.core.Node;
 import cu.edu.cujae.graphy.core.Tree;
 import cu.edu.cujae.graphy.core.TreeNode;
 import cu.edu.cujae.graphy.core.iterators.GraphIterator;
+import cu.edu.cujae.graphy.utils.Pair;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,13 +48,41 @@ public class TreeUtils
             }
         }
     }
-    
+
     public static DefaultMutableTreeNode makeTree(Tree<Person> tree)
     {
         Person root = tree.getRoot().get();
-        DefaultMutableTreeNode person = new DefaultMutableTreeNode(root.getName()+root.getLastName());
-        
+        DefaultMutableTreeNode person = new DefaultMutableTreeNode(root.getName() + root.
+            getLastName());
+
         walk(tree.getRoot(), person);
+
+        return person;
+    }
+
+    private static void walkP(TreeNode<Pair<Person, Integer>> node, DefaultMutableTreeNode parent)
+    {
+        String i = node.get().getLast().equals(Integer.valueOf(0)) ? " " : node.get().getLast().toString();
+        DefaultMutableTreeNode current = new DefaultMutableTreeNode(node.get().getFirst().getName() + " " + node.get().
+            getFirst().getLastName() + " " + i);
+        parent.add(current);
+
+        if (node.hasChildren())
+        {
+            for (TreeNode<Pair<Person, Integer>> child : node.getChildren())
+            {
+                walkP(child, current);
+            }
+        }
+    }
+
+    public static DefaultMutableTreeNode makeTreeP(Tree<Pair<Person, Integer>> tree)
+    {
+        Pair<Person, Integer> root = tree.getRoot().get();
+        DefaultMutableTreeNode person = new DefaultMutableTreeNode(root.getFirst().getName() + " " + root.getFirst().
+            getLastName() + " " + " ");
+        
+        walkP(tree.getRoot(), person);
         
         return person;
     }

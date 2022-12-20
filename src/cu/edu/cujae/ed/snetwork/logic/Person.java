@@ -10,6 +10,7 @@ import cu.edu.cujae.ed.snetwork.utils.NotificationType;
 import cu.edu.cujae.graphy.utils.Pair;
 import java.awt.Image;
 import java.util.UUID;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -89,7 +90,7 @@ public final class Person
 
     public void setName(String name) throws IllegalArgumentException
     {
-        if (name != null)
+        if (name != null && validarNombre(name))
         {
             this.name = name;
         }
@@ -101,7 +102,7 @@ public final class Person
 
     public void setLastName(String lastName) throws IllegalArgumentException
     {
-        if (lastName != null)
+        if (lastName != null && validarApellidos(lastName))
         {
             this.lastName = lastName;
         }
@@ -113,7 +114,7 @@ public final class Person
 
     public void setCountry(String country) throws IllegalArgumentException
     {
-        if (country != null)
+        if (country != null && validarPais(country))
         {
             this.country = country;
         }
@@ -125,7 +126,7 @@ public final class Person
 
     public void setProfession(String profession) throws IllegalArgumentException
     {
-        if (profession != null)
+        if (profession != null && validarProfesion(profession))
         {
             this.profession = profession;
         }
@@ -135,6 +136,81 @@ public final class Person
         }
     }
 
+    public boolean validarNombre(String nombre)
+    {
+        boolean result = true;
+        boolean flag;
+        for (int i = 0; i < nombre.length() && result; i++)
+        {
+            flag = Character.isUpperCase(nombre.charAt(0)) && nombre.charAt(0) != ' ' && (Character.isLetter(nombre.
+                                                                                          charAt(i)) || nombre.charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "El nombre debe iniciar con letra mayúscula", "Nombre incorrecto",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+
+    }
+
+    public boolean validarApellidos(String apellidos)
+    {
+        boolean result = true;
+        boolean flag;
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "Los apellidos deben iniciar con letra mayúscula",
+                                              "Apellidos incorrectos", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+    }
+
+    public boolean validarPais(String apellidos)
+    {
+        boolean result = true;
+        boolean flag;
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "El país debe iniciar con letra mayúscula", "País incorrecto",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+    }
+
+    public boolean validarProfesion(String apellidos)
+    {
+        boolean result = true;
+        boolean flag;
+        for (int i = 0; i < apellidos.length() && result; i++)
+        {
+            flag = Character.isUpperCase(apellidos.charAt(0)) && apellidos.charAt(0) != ' ' && (Character.isLetter(
+                                                                                                apellidos.charAt(i)) || apellidos.
+                                                                                                charAt(i) == ' ');
+            if (!flag)
+            {
+                result = false;
+                JOptionPane.showMessageDialog(null, "La profesión debe iniciar con letra mayúscula",
+                                              "Profesión incorrecta", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+    }
     public void setID(String ID)
     {
         boolean flag = true;
@@ -267,4 +343,9 @@ public final class Person
         this.photo = photo;
     }
 
+    @Override
+    public String toString()
+    {
+        return name + " " + lastName;
+    }
 }

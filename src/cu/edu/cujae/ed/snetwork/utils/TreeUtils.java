@@ -37,7 +37,8 @@ public class TreeUtils
 {
     private static void walk(TreeNode<Person> node, DefaultMutableTreeNode parent)
     {
-        DefaultMutableTreeNode current = new DefaultMutableTreeNode(node.get().getName() +node.get().getLastName());
+        DefaultMutableTreeNode current = new DefaultMutableTreeNode(node.get().getName() + " " + node.get().
+            getLastName());
         parent.add(current);
         
         if (node.hasChildren())

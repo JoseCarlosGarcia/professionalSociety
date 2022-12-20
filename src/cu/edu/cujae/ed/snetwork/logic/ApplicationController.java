@@ -603,8 +603,9 @@ public class ApplicationController
         for (Edge e : ite.getAllAdjacentEdges())
         {
             @SuppressWarnings("unchecked")
-            Pair<Person, Integer> pair = new Pair(e.getFinalNode().get() == root ? e.getStartNode().get() : e.
-                getFinalNode().get(),
+            Pair<Person, Integer> pair = new Pair(e.getFinalNode().get() == root.getFirst() ? e.getStartNode().get()
+                                                  : e.
+                    getFinalNode().get(),
                                                   e.getWeight().getValue());
             list.add(pair);
         }

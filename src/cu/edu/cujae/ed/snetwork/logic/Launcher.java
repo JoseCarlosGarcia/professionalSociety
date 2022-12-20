@@ -118,7 +118,7 @@ public class Launcher
                         //
                         Person brian = new Person("Brian Michel", "Morales", "02102768988", "Australia",
                                                   "Ingeniero Automatico",
-                                                  "16_03");
+                                                  "1603");
                         Person jose
                                    = new Person("José Carlos", "García Cruz", "01081268460", "España",
                                                 "Analista de requisitos",
